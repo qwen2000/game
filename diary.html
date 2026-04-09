@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<!-- 放在 </head> 前 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -19,78 +16,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
-        /* 导出按钮 */
-.export-btn {
-    position: fixed;
-    bottom: 170px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: white;
-    border: none;
-    color: var(--deep-blue);
-    font-size: 1.3rem;
-    cursor: pointer;
-    box-shadow: 0 4px 15px var(--shadow);
-    transition: all 0.3s;
-    z-index: 100;
-}
-
-.export-btn:hover {
-    transform: scale(1.1);
-}
-
-/* 导出预览 */
-.export-preview {
-    background: var(--cream);
-    border-radius: 12px;
-    padding: 15px;
-    margin: 15px 0;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.preview-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 0.85rem;
-    color: var(--text-light);
-}
-
-.preview-list {
-    font-size: 0.9rem;
-}
-
-.preview-item {
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
-}
-
-.preview-item:last-child {
-    border-bottom: none;
-}
-
-.preview-date {
-    color: var(--deep-blue);
-    font-weight: 500;
-}
-
-.preview-title {
-    color: var(--text-light);
-    flex: 1;
-    margin-left: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
         :root {
             --cream: #f5f7fa;
@@ -113,6 +38,167 @@
             color: var(--text);
             line-height: 1.7;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* 密码锁屏 */
+        .lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--soft-blue), var(--sky));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 40px 20px;
+        }
+
+        .lock-screen.hidden {
+            display: none;
+        }
+
+        .lock-icon {
+            font-size: 5rem;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .lock-title {
+            font-size: 1.8rem;
+            color: var(--navy);
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+        }
+
+        .lock-subtitle {
+            color: var(--warm-gray);
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        .password-dots {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .password-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--light-blue);
+            transition: all 0.3s;
+        }
+
+        .password-dot.filled {
+            background: var(--deep-blue);
+            border-color: var(--deep-blue);
+        }
+
+        .password-dot.error {
+            background: #ffcdd2;
+            border-color: #f44336;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 280px;
+        }
+
+        .numpad-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: var(--navy);
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .numpad-btn:hover {
+            transform: scale(1.05);
+            background: var(--soft-blue);
+        }
+
+        .numpad-btn:active {
+            transform: scale(0.95);
+        }
+
+        .numpad-btn.delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .numpad-btn.delete:hover {
+            background: #ffcdd2;
+        }
+
+        .lock-hint {
+            margin-top: 30px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .lock-hint:hover {
+            color: var(--deep-blue);
+        }
+
+        /* 设置密码弹窗 */
+        .setup-password {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .setup-password h3 {
+            color: var(--navy);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .setup-password input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--sky);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 0.5em;
+            margin-bottom: 20px;
+        }
+
+        .setup-password input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
         }
 
         /* 头部 */
@@ -350,70 +436,32 @@
             transform: scale(1.1) rotate(90deg);
         }
 
-<!-- 导出按钮 -->
-<button class="export-btn" onclick="openExportModal()" title="导出PDF">📄</button>
+        /* 导出按钮 */
+        .export-btn {
+            position: fixed;
+            bottom: 105px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            color: var(--deep-blue);
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s;
+            z-index: 100;
+        }
 
-<!-- 导出弹窗 -->
-<div class="modal" id="exportModal">
-    <div class="form-container" style="max-width: 500px;">
-        <h2>📄 导出日记为 PDF</h2>
-        
-        <div class="form-group">
-            <label>时间范围</label>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="date" id="exportStartDate" style="flex: 1;">
-                <span>至</span>
-                <input type="date" id="exportEndDate" style="flex: 1;">
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label>导出选项</label>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                    <input type="checkbox" id="includeImages" checked>
-                    <span>包含图片</span>
-                </label>
-                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                    <input type="checkbox" id="includeTitle" checked>
-                    <span>显示标题</span>
-                </label>
-            </div>
-        </div>
-        
-        <div class="export-preview" id="exportPreview">
-            <div class="preview-header">
-                <span>📋 预览</span>
-                <span id="previewCount">0 篇日记</span>
-            </div>
-            <div class="preview-list" id="previewList">
-                请选择时间范围
-            </div>
-        </div>
-        
-        <div class="form-buttons">
-            <button type="button" class="btn btn-secondary" onclick="closeModal('exportModal')">取消</button>
-            <button type="button" class="btn btn-primary" onclick="generatePDF()" id="generateBtn" disabled>生成 PDF</button>
-        </div>
-    </div>
-</div>
+        .export-btn:hover {
+            transform: scale(1.1);
+        }
 
-<!-- PDF 生成进度 -->
-<div class="modal" id="pdfProgressModal">
-    <div class="form-container" style="max-width: 400px; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 15px;">📄</div>
-        <h3 style="margin-bottom: 10px;">正在生成 PDF...</h3>
-        <div class="progress-bar" style="height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; margin: 20px 0;">
-            <div id="pdfProgress" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--light-blue), var(--deep-blue)); transition: width 0.3s;"></div>
-        </div>
-        <p id="pdfStatus" style="color: var(--text-light); font-size: 0.9rem;">准备中...</p>
-    </div>
-</div>
-        
         /* 设置按钮 */
         .settings-btn {
             position: fixed;
-            bottom: 105px;
+            bottom: 170px;
             right: 30px;
             width: 50px;
             height: 50px;
@@ -592,6 +640,11 @@
             color: var(--text-light);
         }
 
+        .btn-danger {
+            background: #ffebee;
+            color: #c62828;
+        }
+
         /* 图片查看器 */
         .image-viewer {
             display: none;
@@ -631,7 +684,7 @@
             cursor: pointer;
         }
 
-        /* 配置弹窗 */
+        /* 配置提示 */
         .config-hint {
             background: var(--soft-blue);
             color: var(--navy);
@@ -648,6 +701,56 @@
             border-radius: 4px;
             font-family: monospace;
             font-size: 0.85rem;
+        }
+
+        /* 导出预览 */
+        .export-preview {
+            background: var(--cream);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .preview-list {
+            font-size: 0.9rem;
+        }
+
+        .preview-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-date {
+            color: var(--deep-blue);
+            font-weight: 500;
+        }
+
+        .preview-title {
+            color: var(--text-light);
+            flex: 1;
+            margin-left: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* 加载提示 */
@@ -716,33 +819,90 @@
             .entry-images {
                 grid-template-columns: repeat(3, 1fr);
             }
+
+            .numpad-btn {
+                width: 65px;
+                height: 65px;
+            }
+
+            .lock-title {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>日記 <span>Diary</span></h1>
-    </header>
-
-    <div class="breadcrumb">
-        <a href="index.html">首页</a> / 日记
+    <!-- 密码锁屏 -->
+    <div class="lock-screen" id="lockScreen">
+        <div class="lock-icon">🔒</div>
+        <h2 class="lock-title">我的日记</h2>
+        <p class="lock-subtitle">请输入密码解锁</p>
+        
+        <div class="password-dots" id="passwordDots">
+            <div class="password-dot"></div>
+            <div class="password-dot"></div>
+            <div class="password-dot"></div>
+            <div class="password-dot"></div>
+        </div>
+        
+        <div class="numpad" id="numpad">
+            <button class="numpad-btn" onclick="enterDigit(1)">1</button>
+            <button class="numpad-btn" onclick="enterDigit(2)">2</button>
+            <button class="numpad-btn" onclick="enterDigit(3)">3</button>
+            <button class="numpad-btn" onclick="enterDigit(4)">4</button>
+            <button class="numpad-btn" onclick="enterDigit(5)">5</button>
+            <button class="numpad-btn" onclick="enterDigit(6)">6</button>
+            <button class="numpad-btn" onclick="enterDigit(7)">7</button>
+            <button class="numpad-btn" onclick="enterDigit(8)">8</button>
+            <button class="numpad-btn" onclick="enterDigit(9)">9</button>
+            <button class="numpad-btn" onclick="clearPassword()" style="font-size: 1rem;">清空</button>
+            <button class="numpad-btn" onclick="enterDigit(0)">0</button>
+            <button class="numpad-btn delete" onclick="deleteDigit()">⌫</button>
+        </div>
+        
+        <p class="lock-hint" onclick="showPasswordSetup()">设置/修改密码</p>
     </div>
 
-    <div class="stats-bar">
-        <div class="stat-item">📝 总计 <span id="totalCount">0</span> 篇</div>
-        <div class="stat-item">📷 图片 <span id="imageCount">0</span> 张</div>
-    </div>
-
-    <div class="diary-container" id="diaryList">
-        <div class="empty-state">
-            <div class="icon">📖</div>
-            <h3>还没有日记</h3>
-            <p>点击右下角 + 开始记录今天的故事</p>
+    <!-- 设置密码弹窗 -->
+    <div class="modal" id="passwordSetupModal">
+        <div class="setup-password">
+            <h3>🔐 设置密码</h3>
+            <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 15px;">请输入4位数字密码</p>
+            <input type="password" id="newPassword" maxlength="4" placeholder="••••" readonly>
+            <div class="form-buttons">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('passwordSetupModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="savePassword()">保存</button>
+            </div>
         </div>
     </div>
 
-    <button class="add-btn" onclick="openAddModal()">+</button>
-    <button class="settings-btn" onclick="openConfigModal()" title="配置同步">⚙️</button>
+    <!-- 主内容（初始隐藏） -->
+    <div id="mainContent" style="display: none;">
+        <header>
+            <h1>日記 <span>Diary</span></h1>
+        </header>
+
+        <div class="breadcrumb">
+            <a href="index.html">首页</a> / 日记
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">📝 总计 <span id="totalCount">0</span> 篇</div>
+            <div class="stat-item">📷 图片 <span id="imageCount">0</span> 张</div>
+        </div>
+
+        <div class="diary-container" id="diaryList">
+            <div class="empty-state">
+                <div class="icon">📖</div>
+                <h3>还没有日记</h3>
+                <p>点击右下角 + 开始记录今天的故事</p>
+            </div>
+        </div>
+
+        <button class="add-btn" onclick="openAddModal()">+</button>
+        <button class="export-btn" onclick="openExportModal()" title="导出PDF">📄</button>
+        <button class="settings-btn" onclick="openConfigModal()" title="配置">⚙️</button>
+    </div>
 
     <!-- 配置弹窗 -->
     <div class="modal" id="configModal">
@@ -766,6 +926,36 @@
             <div class="form-buttons">
                 <button type="button" class="btn btn-secondary" onclick="closeModal('configModal')">取消</button>
                 <button type="button" class="btn btn-primary" onclick="saveConfig()">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub 图床配置弹窗 -->
+    <div class="modal" id="githubConfigModal">
+        <div class="form-container" style="max-width: 500px;">
+            <h2>🔧 配置 GitHub 图床</h2>
+            <div class="config-hint" style="background: #e3f2fd; color: #1565c0;">
+                <strong>免费无限容量图片存储</strong><br><br>
+                1. 创建 GitHub 公开仓库（如：yourname/diary-images）<br>
+                2. 生成 Personal Access Token（勾选 repo 权限）<br>
+                3. 填入下方配置<br>
+                4. 图片将通过 jsDelivr CDN 加速访问
+            </div>
+            <div class="form-group">
+                <label>GitHub Token</label>
+                <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>仓库名称（格式：用户名/仓库名）</label>
+                <input type="text" id="githubRepo" placeholder="例如：zhangsan/diary-images">
+            </div>
+            <div class="form-group">
+                <label>分支（默认 main）</label>
+                <input type="text" id="githubBranch" value="main">
+            </div>
+            <div class="form-buttons">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('githubConfigModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="testAndSaveGithubConfig()">测试并保存</button>
             </div>
         </div>
     </div>
@@ -803,6 +993,93 @@
         </div>
     </div>
 
+    <!-- 详情弹窗 -->
+    <div class="modal detail-modal" id="detailModal">
+        <div class="form-container">
+            <div class="detail-layout" id="detailContent"></div>
+        </div>
+    </div>
+
+    <!-- 类别管理弹窗 -->
+    <div class="modal" id="categoryModal">
+        <div class="form-container" style="max-width: 420px;">
+            <h2>🏷️ 管理游戏类别</h2>
+            <div class="form-group">
+                <label>当前类别（点击 × 删除）</label>
+                <div class="category-manage" id="categoryManageList"></div>
+            </div>
+            <div class="form-group">
+                <label>添加新类别</label>
+                <div class="add-category-input" id="addCatInput">
+                    <input type="text" id="newCategoryName" placeholder="类别名称" maxlength="10">
+                    <button class="btn-save-note" onclick="confirmAddCategory()">✓</button>
+                    <button class="btn-cancel-note" onclick="cancelAddCategory()">✕</button>
+                </div>
+                <button class="add-category-btn" id="showAddCatBtn" onclick="showAddCategory()">+ 添加类别</button>
+            </div>
+            <div class="form-buttons" style="margin-top: 25px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出弹窗 -->
+    <div class="modal" id="exportModal">
+        <div class="form-container" style="max-width: 500px;">
+            <h2>📄 导出日记为 PDF</h2>
+            
+            <div class="form-group">
+                <label>时间范围</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="date" id="exportStartDate" style="flex: 1;">
+                    <span>至</span>
+                    <input type="date" id="exportEndDate" style="flex: 1;">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>导出选项</label>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="includeImages" checked>
+                        <span>包含图片</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" id="includeTitle" checked>
+                        <span>显示标题</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="export-preview" id="exportPreview">
+                <div class="preview-header">
+                    <span>📋 预览</span>
+                    <span id="previewCount">0 篇日记</span>
+                </div>
+                <div class="preview-list" id="previewList">
+                    请选择时间范围
+                </div>
+            </div>
+            
+            <div class="form-buttons">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('exportModal')">取消</button>
+                <button type="button" class="btn btn-primary" onclick="generatePDF()" id="generateBtn" disabled>生成 PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF 生成进度 -->
+    <div class="modal" id="pdfProgressModal">
+        <div class="form-container" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 15px;">📄</div>
+            <h3 style="margin-bottom: 10px;">正在生成 PDF...</h3>
+            <div class="progress-bar" style="height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; margin: 20px 0;">
+                <div id="pdfProgress" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--light-blue), var(--deep-blue)); transition: width 0.3s;"></div>
+            </div>
+            <p id="pdfStatus" style="color: var(--text-light); font-size: 0.9rem;">准备中...</p>
+        </div>
+    </div>
+
     <!-- 图片查看器 -->
     <div class="image-viewer" id="imageViewer" onclick="closeImageViewer()">
         <button class="close-viewer" onclick="closeImageViewer()">×</button>
@@ -815,36 +1092,248 @@
         <div style="margin-top: 15px; color: var(--deep-blue);">同步中...</div>
     </div>
 
+    <!-- PDF 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <script>
+// ============ 密码功能 ============
+const PASSWORD_KEY = 'diary_password';
+let currentPassword = '';
+let tempPassword = '';
+
+// 检查是否已设置密码
+function hasPassword() {
+    return !!localStorage.getItem(PASSWORD_KEY);
+}
+
+// 获取密码
+function getPassword() {
+    return localStorage.getItem(PASSWORD_KEY);
+}
+
+// 初始化锁屏
+function initLockScreen() {
+    if (!hasPassword()) {
+        // 首次使用，引导设置密码
+        showPasswordSetup();
+        return;
+    }
+    
+    document.getElementById('lockScreen').classList.remove('hidden');
+    document.getElementById('mainContent').style.display = 'none';
+    currentPassword = '';
+    updatePasswordDots();
+}
+
+// 输入数字
+function enterDigit(digit) {
+    if (currentPassword.length < 4) {
+        currentPassword += digit;
+        updatePasswordDots();
+        
+        if (currentPassword.length === 4) {
+            setTimeout(checkPassword, 200);
+        }
+    }
+}
+
+// 删除数字
+function deleteDigit() {
+    currentPassword = currentPassword.slice(0, -1);
+    updatePasswordDots();
+}
+
+// 清空密码
+function clearPassword() {
+    currentPassword = '';
+    updatePasswordDots();
+}
+
+// 更新密码点显示
+function updatePasswordDots() {
+    const dots = document.querySelectorAll('.password-dot');
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('filled', index < currentPassword.length);
+        dot.classList.remove('error');
+    });
+}
+
+// 检查密码
+function checkPassword() {
+    const correctPassword = getPassword();
+    
+    if (currentPassword === correctPassword) {
+        // 解锁成功
+        document.getElementById('lockScreen').classList.add('hidden');
+        document.getElementById('mainContent').style.display = 'block';
+        // 初始化日记内容
+        initDiary();
+    } else {
+        // 密码错误
+        const dots = document.querySelectorAll('.password-dot');
+        dots.forEach(dot => dot.classList.add('error'));
+        showToast('❌ 密码错误');
+        
+        setTimeout(() => {
+            currentPassword = '';
+            updatePasswordDots();
+        }, 500);
+    }
+}
+
+// 显示密码设置
+function showPasswordSetup() {
+    tempPassword = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('passwordSetupModal').classList.add('active');
+    
+    // 创建数字键盘
+    createSetupNumpad();
+}
+
+// 创建设置密码的数字键盘
+function createSetupNumpad() {
+    const input = document.getElementById('newPassword');
+    input.value = '';
+    tempPassword = '';
+    
+    // 点击输入框弹出提示
+    input.onclick = () => {
+        showToast('请使用下方数字键盘输入');
+    };
+}
+
+// 设置密码页面的数字输入（复用主键盘）
+const originalEnterDigit = enterDigit;
+const originalDeleteDigit = deleteDigit;
+const originalClearPassword = clearPassword;
+
+// 修改键盘功能用于设置密码
+function setupPasswordMode() {
+    const numpad = document.getElementById('numpad');
+    const isSetupMode = document.getElementById('passwordSetupModal').classList.contains('active');
+    
+    if (isSetupMode) {
+        // 设置模式：直接操作输入框
+        window.enterDigit = (d) => {
+            if (tempPassword.length < 4) {
+                tempPassword += d;
+                document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
+            }
+        };
+        window.deleteDigit = () => {
+            tempPassword = tempPassword.slice(0, -1);
+            document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
+        };
+        window.clearPassword = () => {
+            tempPassword = '';
+            document.getElementById('newPassword').value = '';
+        };
+    } else {
+        // 解锁模式：恢复原功能
+        window.enterDigit = originalEnterDigit;
+        window.deleteDigit = originalDeleteDigit;
+        window.clearPassword = originalClearPassword;
+    }
+}
+
+// 保存密码
+function savePassword() {
+    if (tempPassword.length !== 4) {
+        alert('请输入4位密码');
+        return;
+    }
+    
+    localStorage.setItem(PASSWORD_KEY, tempPassword);
+    closeModal('passwordSetupModal');
+    showToast('✅ 密码设置成功');
+    
+    // 恢复键盘功能
+    window.enterDigit = originalEnterDigit;
+    window.deleteDigit = originalDeleteDigit;
+    window.clearPassword = originalClearPassword;
+    
+    // 如果之前没有密码，现在解锁
+    if (!hasPassword() || tempPassword === getPassword()) {
+        document.getElementById('lockScreen').classList.add('hidden');
+        document.getElementById('mainContent').style.display = 'block';
+        initDiary();
+    }
+}
+
+// 修改密码
+function changePassword() {
+    // 先验证旧密码
+    const oldPass = prompt('请输入当前密码：');
+    if (oldPass !== getPassword()) {
+        alert('密码错误');
+        return;
+    }
+    showPasswordSetup();
+}
+
 // ============ JSONBin.io 配置 ============
 function getJSONBinConfig() {
-    // 优先使用日记专用配置，否则使用游戏书架的配置
     return {
         BIN_ID: localStorage.getItem('diary_bin_id') || localStorage.getItem('jsonbin_bin_id') || '',
         API_KEY: localStorage.getItem('diary_api_key') || localStorage.getItem('jsonbin_api_key') || ''
     };
 }
 
+// ============ GitHub 图床配置 ============
+const GITHUB_CONFIG = {
+    TOKEN: localStorage.getItem('github_token') || '',
+    REPO: localStorage.getItem('github_repo') || '',
+    BRANCH: localStorage.getItem('github_branch') || 'main'
+};
+
+function checkGithubConfig() {
+    if (!GITHUB_CONFIG.TOKEN || !GITHUB_CONFIG.REPO) {
+        const gameToken = localStorage.getItem('github_token');
+        const gameRepo = localStorage.getItem('github_repo');
+        
+        if (gameToken && gameRepo) {
+            GITHUB_CONFIG.TOKEN = gameToken;
+            GITHUB_CONFIG.REPO = gameRepo;
+            return true;
+        }
+        return false;
+    }
+    return true;
+}
+
+function saveGithubConfig(token, repo, branch = 'main') {
+    localStorage.setItem('github_token', token);
+    localStorage.setItem('github_repo', repo);
+    localStorage.setItem('github_branch', branch);
+    GITHUB_CONFIG.TOKEN = token;
+    GITHUB_CONFIG.REPO = repo;
+    GITHUB_CONFIG.BRANCH = branch;
+}
+
 // ============ 数据存储 ============
 let entries = [];
-let currentImages = []; // 当前编辑的图片列表
+let currentImages = [];
 
-// ============ 初始化 ============
-document.addEventListener('DOMContentLoaded', async () => {
+// ============ 初始化日记 ============
+function initDiary() {
     const config = getJSONBinConfig();
     
     if (!config.BIN_ID || !config.API_KEY) {
         showToast('⚙️ 请先配置同步设置');
         entries = JSON.parse(localStorage.getItem('diary_entries')) || [];
+        renderEntries();
+        updateStats();
     } else {
         showLoading(true);
-        await loadFromJSONBin();
-        showLoading(false);
+        loadFromJSONBin().then(() => {
+            hideLoading();
+            renderEntries();
+            updateStats();
+        });
     }
-    
-    renderEntries();
-    updateStats();
-});
+}
 
 // ============ JSONBin.io 操作 ============
 async function loadFromJSONBin() {
@@ -860,13 +1349,11 @@ async function loadFromJSONBin() {
         
         const data = await response.json();
         
-        // 支持独立存储或与游戏书架共用
         if (data.record.entries) {
             entries = data.record.entries;
         } else if (data.record.diary) {
             entries = data.record.diary;
         } else {
-            // 共用 Bin，但数据分开存储
             entries = data.record.diary_entries || [];
         }
         
@@ -890,7 +1377,6 @@ async function saveToJSONBin() {
     }
     
     try {
-        // 先读取现有数据，避免覆盖游戏书架的数据
         const readRes = await fetch(`https://api.jsonbin.io/v3/b/${config.BIN_ID}/latest`, {
             headers: { 'X-Master-Key': config.API_KEY }
         });
@@ -900,11 +1386,10 @@ async function saveToJSONBin() {
             existingData = (await readRes.json()).record;
         }
         
-        // 合并数据，保留游戏书架的数据
         const saveData = {
             ...existingData,
-            entries: entries,  // 日记数据
-            diary_entries: entries  // 兼容字段
+            entries: entries,
+            diary_entries: entries
         };
         
         const response = await fetch(`https://api.jsonbin.io/v3/b/${config.BIN_ID}`, {
@@ -932,10 +1417,16 @@ async function saveToJSONBin() {
 
 // ============ 配置管理 ============
 function openConfigModal() {
-    const config = getJSONBinConfig();
-    document.getElementById('binId').value = config.BIN_ID;
-    document.getElementById('apiKey').value = config.API_KEY;
-    document.getElementById('configModal').classList.add('active');
+    const choice = confirm('点击"确定"配置日记云同步（JSONBin）\n点击"取消"配置图片存储（GitHub）');
+    
+    if (choice) {
+        const config = getJSONBinConfig();
+        document.getElementById('binId').value = config.BIN_ID;
+        document.getElementById('apiKey').value = config.API_KEY;
+        document.getElementById('configModal').classList.add('active');
+    } else {
+        openGithubConfigModal();
+    }
 }
 
 async function saveConfig() {
@@ -956,6 +1447,201 @@ async function saveConfig() {
     await loadFromJSONBin();
     renderEntries();
     updateStats();
+}
+
+function openGithubConfigModal() {
+    document.getElementById('githubToken').value = GITHUB_CONFIG.TOKEN;
+    document.getElementById('githubRepo').value = GITHUB_CONFIG.REPO;
+    document.getElementById('githubBranch').value = GITHUB_CONFIG.BRANCH;
+    document.getElementById('githubConfigModal').classList.add('active');
+}
+
+async function testAndSaveGithubConfig() {
+    const token = document.getElementById('githubToken').value.trim();
+    const repo = document.getElementById('githubRepo').value.trim();
+    const branch = document.getElementById('githubBranch').value.trim() || 'main';
+    
+    if (!token || !repo) {
+        alert('请填写完整的 Token 和仓库名称');
+        return;
+    }
+    
+    if (!repo.includes('/')) {
+        alert('仓库名称格式应为：用户名/仓库名');
+        return;
+    }
+    
+    showToast('🔄 正在测试连接...');
+    
+    try {
+        const response = await fetch(`https://api.github.com/repos/${repo}`, {
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || '无法访问仓库');
+        }
+        
+        const data = await response.json();
+        
+        saveGithubConfig(token, repo, branch);
+        
+        closeModal('githubConfigModal');
+        showToast(`✅ 连接成功！仓库：${data.name}`);
+        
+        updateImagePreview();
+        
+    } catch (err) {
+        alert('连接失败：' + err.message + '\n\n请检查：\n1. Token 是否正确\n2. 仓库是否为公开\n3. Token 是否有 repo 权限');
+    }
+}
+
+// ============ 图片处理 ============
+function compressImage(file, maxWidth = 1200, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > maxWidth) {
+                    height = (maxWidth / width) * height;
+                    width = maxWidth;
+                }
+                
+                canvas.width = Math.floor(width);
+                canvas.height = Math.floor(height);
+                
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function selectImages() {
+    if (!checkGithubConfig()) {
+        openGithubConfigModal();
+        return;
+    }
+    document.getElementById('imageInput').click();
+}
+
+async function handleImageSelect(event) {
+    const files = event.target.files;
+    if (!files.length) return;
+    
+    showToast('🔄 正在上传图片到 GitHub...');
+    
+    for (const file of files) {
+        if (currentImages.length >= 9) {
+            showToast('最多添加9张图片');
+            break;
+        }
+        
+        try {
+            const imageUrl = await uploadToGithub(file);
+            currentImages.push(imageUrl);
+            updateImagePreview();
+            showToast(`✅ 已上传 ${currentImages.length}/${Math.min(files.length + currentImages.length - 1, 9)}`);
+        } catch (err) {
+            console.error('上传失败:', err);
+            showToast('❌ 上传失败: ' + err.message);
+        }
+    }
+    
+    event.target.value = '';
+}
+
+async function uploadToGithub(file) {
+    const compressed = await compressImage(file, 1200, 0.8);
+    const base64Data = compressed.split(',')[1];
+    
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    const randomStr = Math.random().toString(36).substring(2, 10);
+    const filename = `images/${dateStr}_${randomStr}.jpg`;
+    
+    const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.REPO}/contents/${filename}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `token ${GITHUB_CONFIG.TOKEN}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify({
+            message: `Add diary image: ${filename}`,
+            content: base64Data,
+            branch: GITHUB_CONFIG.BRANCH
+        })
+    });
+    
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Upload failed');
+    }
+    
+    return `https://cdn.jsdelivr.net/gh/${GITHUB_CONFIG.REPO}@${GITHUB_CONFIG.BRANCH}/${filename}`;
+}
+
+function updateImagePreview() {
+    const container = document.getElementById('imageUploadArea');
+    container.innerHTML = '';
+    
+    currentImages.forEach((img, index) => {
+        const div = document.createElement('div');
+        div.className = 'image-preview';
+        div.innerHTML = `
+            <img src="${img}" alt="" onerror="this.src='${img.replace('cdn.jsdelivr.net', 'raw.githubusercontent.com').replace('@main', '/main').replace('@master', '/master')}';this.onerror=null">
+            <button type="button" class="remove-img" onclick="removeImage(${index})">×</button>
+        `;
+        container.appendChild(div);
+    });
+    
+    if (currentImages.length < 9) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'upload-btn';
+        btn.innerHTML = '+';
+        btn.onclick = selectImages;
+        btn.title = checkGithubConfig() ? '添加图片' : '请先配置 GitHub';
+        container.appendChild(btn);
+    }
+}
+
+function removeImage(index) {
+    currentImages.splice(index, 1);
+    updateImagePreview();
+}
+
+function viewImage(src) {
+    document.getElementById('viewerImage').src = src;
+    document.getElementById('viewerImage').onerror = function() {
+        this.src = src.replace('cdn.jsdelivr.net/gh/', 'raw.githubusercontent.com/')
+                      .replace('@main/', '/main/')
+                      .replace('@master/', '/master/');
+        this.onerror = null;
+    };
+    document.getElementById('imageViewer').classList.add('active');
+}
+
+function closeImageViewer() {
+    document.getElementById('imageViewer').classList.remove('active');
 }
 
 // ============ 日记操作 ============
@@ -996,7 +1682,6 @@ async function saveEntry(e) {
     };
     
     if (id) {
-        // 编辑：删除原位置，更新后置顶
         const index = entries.findIndex(e => e.id === id);
         entryData.id = id;
         entryData.createdAt = entries[index].createdAt;
@@ -1004,7 +1689,6 @@ async function saveEntry(e) {
         entries.splice(index, 1);
         entries.unshift(entryData);
     } else {
-        // 新建：置顶
         entryData.id = Date.now().toString();
         entryData.createdAt = now.toISOString();
         entries.unshift(entryData);
@@ -1026,72 +1710,6 @@ async function deleteEntry(id) {
     await saveToJSONBin();
     renderEntries();
     updateStats();
-}
-
-// ============ 图片处理 ============
-function selectImages() {
-    document.getElementById('imageInput').click();
-}
-
-function handleImageSelect(event) {
-    const files = event.target.files;
-    if (!files.length) return;
-    
-    Array.from(files).forEach(file => {
-        if (currentImages.length >= 9) {
-            showToast('最多添加9张图片');
-            return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            currentImages.push(e.target.result);
-            updateImagePreview();
-        };
-        reader.readAsDataURL(file);
-    });
-    
-    event.target.value = '';
-}
-
-function updateImagePreview() {
-    const container = document.getElementById('imageUploadArea');
-    container.innerHTML = '';
-    
-    // 显示已选图片
-    currentImages.forEach((img, index) => {
-        const div = document.createElement('div');
-        div.className = 'image-preview';
-        div.innerHTML = `
-            <img src="${img}" alt="">
-            <button type="button" class="remove-img" onclick="removeImage(${index})">×</button>
-        `;
-        container.appendChild(div);
-    });
-    
-    // 添加按钮（未满9张）
-    if (currentImages.length < 9) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'upload-btn';
-        btn.textContent = '+';
-        btn.onclick = selectImages;
-        container.appendChild(btn);
-    }
-}
-
-function removeImage(index) {
-    currentImages.splice(index, 1);
-    updateImagePreview();
-}
-
-function viewImage(src) {
-    document.getElementById('viewerImage').src = src;
-    document.getElementById('imageViewer').classList.add('active');
-}
-
-function closeImageViewer() {
-    document.getElementById('imageViewer').classList.remove('active');
 }
 
 // ============ 渲染 ============
@@ -1132,7 +1750,7 @@ function renderEntries() {
                     <div class="entry-images">
                         ${entry.images.map(img => `
                             <div class="entry-image" onclick="viewImage('${img}')">
-                                <img src="${img}" alt="">
+                                <img src="${img}" alt="" loading="lazy">
                             </div>
                         `).join('')}
                     </div>
@@ -1154,44 +1772,8 @@ function updateStats() {
     document.getElementById('imageCount').textContent = imageCount;
 }
 
-// ============ 工具函数 ============
-function showLoading(show) {
-    document.getElementById('loadingMask').classList.toggle('active', show);
-}
-
-function showToast(message) {
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-    
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.remove(), 2500);
-}
-
-function closeModal(id) {
-    document.getElementById(id).classList.remove('active');
-}
-
-document.querySelectorAll('.modal').forEach(modal => {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal(modal.id);
-    });
-});
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        document.querySelectorAll('.modal.active').forEach(m => closeModal(m.id));
-        closeImageViewer();
-    }
-});
-
-// ============ PDF 导出功能 ============
-
+// ============ PDF 导出 ============
 function openExportModal() {
-    // 设置默认日期范围（本月）
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
     
@@ -1201,7 +1783,6 @@ function openExportModal() {
     updateExportPreview();
     document.getElementById('exportModal').classList.add('active');
     
-    // 监听日期变化
     document.getElementById('exportStartDate').onchange = updateExportPreview;
     document.getElementById('exportEndDate').onchange = updateExportPreview;
 }
@@ -1213,7 +1794,7 @@ function formatDateForInput(date) {
 function updateExportPreview() {
     const startDate = new Date(document.getElementById('exportStartDate').value);
     const endDate = new Date(document.getElementById('exportEndDate').value);
-    endDate.setHours(23, 59, 59, 999); // 包含结束日当天
+    endDate.setHours(23, 59, 59, 999);
     
     const filtered = entries.filter(e => {
         const entryDate = new Date(e.createdAt);
@@ -1255,7 +1836,7 @@ async function generatePDF() {
     const filtered = entries.filter(e => {
         const entryDate = new Date(e.createdAt);
         return entryDate >= startDate && entryDate <= endDate;
-    }).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // 按时间正序
+    }).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     
     closeModal('exportModal');
     document.getElementById('pdfProgressModal').classList.add('active');
@@ -1275,25 +1856,21 @@ async function generatePDF() {
     
     doc.addPage();
     
-    // 生成内容
     for (let i = 0; i < filtered.length; i++) {
         const entry = filtered[i];
         const progress = ((i + 1) / filtered.length * 100).toFixed(0);
         
         updatePDFProgress(progress, `正在生成第 ${i + 1}/${filtered.length} 页...`);
         
-        // 检查是否需要新页面
         if (i > 0) {
             doc.addPage();
         }
         
-        // 日期标题
         const date = new Date(entry.createdAt);
         doc.setFontSize(10);
         doc.setTextColor(150);
         doc.text(formatDateCN(date) + ' ' + getWeekday(date), 20, 20);
         
-        // 标题
         let yPos = 35;
         if (includeTitle && entry.title) {
             doc.setFontSize(16);
@@ -1302,14 +1879,12 @@ async function generatePDF() {
             yPos += 12;
         }
         
-        // 内容
         doc.setFontSize(11);
         doc.setTextColor(80);
         const contentLines = doc.splitTextToSize(entry.content, 170);
         doc.text(contentLines, 20, yPos);
         yPos += contentLines.length * 6 + 10;
         
-        // 图片
         if (includeImages && entry.images && entry.images.length) {
             for (let j = 0; j < Math.min(entry.images.length, 3); j++) {
                 if (yPos > 250) {
@@ -1319,9 +1894,7 @@ async function generatePDF() {
                 
                 try {
                     const imgData = await loadImage(entry.images[j]);
-                    const imgWidth = 60;
-                    const imgHeight = 60;
-                    doc.addImage(imgData, 'JPEG', 20 + j * 65, yPos, imgWidth, imgHeight);
+                    doc.addImage(imgData, 'JPEG', 20 + j * 65, yPos, 60, 60);
                 } catch (e) {
                     console.error('图片加载失败:', e);
                 }
@@ -1329,7 +1902,6 @@ async function generatePDF() {
         }
     }
     
-    // 保存
     const fileName = `日记_${formatDateForInput(startDate)}_至_${formatDateForInput(endDate)}.pdf`;
     doc.save(fileName);
     
@@ -1366,7 +1938,91 @@ function loadImage(src) {
         img.src = src;
     });
 }
+
+// ============ 工具函数 ============
+function showLoading(show) {
+    document.getElementById('loadingMask').classList.toggle('active', show);
+}
+
+function hideLoading() {
+    document.getElementById('loadingMask').classList.remove('active');
+}
+
+function showToast(message) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
     
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.remove(), 2500);
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+    
+    // 退出设置模式
+    if (id === 'passwordSetupModal') {
+        window.enterDigit = originalEnterDigit;
+        window.deleteDigit = originalDeleteDigit;
+        window.clearPassword = originalClearPassword;
+    }
+}
+
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal(modal.id);
+    });
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.active').forEach(m => closeModal(m.id));
+        closeImageViewer();
+    }
+});
+
+// ============ 启动 ============
+// 页面加载时初始化锁屏
+document.addEventListener('DOMContentLoaded', () => {
+    // 保存原始函数
+    window.originalEnterDigit = enterDigit;
+    window.originalDeleteDigit = deleteDigit;
+    window.originalClearPassword = clearPassword;
+    
+    // 监听设置弹窗
+    const setupModal = document.getElementById('passwordSetupModal');
+    const observer = new MutationObserver(() => {
+        if (setupModal.classList.contains('active')) {
+            // 设置模式
+            window.enterDigit = (d) => {
+                if (tempPassword.length < 4) {
+                    tempPassword += d;
+                    document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
+                }
+            };
+            window.deleteDigit = () => {
+                tempPassword = tempPassword.slice(0, -1);
+                document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
+            };
+            window.clearPassword = () => {
+                tempPassword = '';
+                document.getElementById('newPassword').value = '';
+            };
+        } else {
+            // 解锁模式
+            window.enterDigit = window.originalEnterDigit;
+            window.deleteDigit = window.originalDeleteDigit;
+            window.clearPassword = window.originalClearPassword;
+        }
+    });
+    observer.observe(setupModal, { attributes: true, attributeFilter: ['class'] });
+    
+    // 初始化锁屏
+    initLockScreen();
+});
     </script>
 </body>
 </html>
