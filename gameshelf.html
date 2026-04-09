@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的游戏书架 | Game Shelf</title>
     <style>
         * {
@@ -34,6 +34,7 @@
             font-family: 'Hiragino Sans', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             line-height: 1.6;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* 头部 */
@@ -654,28 +655,27 @@
             opacity: 1;
         }
 
-        /* 详情弹窗 - 左右布局 */
-        /* 详情弹窗 - 左右布局（桌面端） */
-.detail-modal .form-container {
-    max-width: 800px;
-    padding: 0;
-    overflow: hidden;
-    max-height: 90vh;
-}
+        /* ========== 详情弹窗 - 桌面端左右布局 ========== */
+        .detail-modal .form-container {
+            max-width: 850px;
+            padding: 0;
+            overflow: hidden;
+            max-height: 85vh;
+        }
 
-.detail-layout {
-    display: flex;
-    min-height: 500px;
-    max-height: 90vh;
-}
+        .detail-layout {
+            display: flex;
+            height: 85vh;
+            max-height: 600px;
+        }
 
-.detail-left {
-    width: 45%;
-    min-height: 500px;
-    max-height: 90vh;
-    position: relative;
-    background: var(--cream);
-}
+        .detail-left {
+            width: 40%;
+            height: 100%;
+            position: relative;
+            background: var(--cream);
+            flex-shrink: 0;
+        }
 
         .detail-cover {
             width: 100%;
@@ -713,38 +713,43 @@
             letter-spacing: 0.2em;
         }
 
-.detail-right {
-    width: 55%;
-    padding: 35px;
-    overflow-y: auto;
-    max-height: 90vh;
-}
+        .detail-right {
+            width: 60%;
+            height: 100%;
+            padding: 30px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .detail-scroll-content {
+            min-height: 100%;
+        }
 
         .detail-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #f0f0f0;
         }
 
         .detail-titles h2 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 500;
             color: var(--warm-brown);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.4;
         }
 
         .detail-titles .original-title {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-light);
             font-style: italic;
         }
 
         .edit-btn {
-            padding: 10px 22px;
+            padding: 10px 20px;
             background: var(--soft-green);
             color: var(--deep-green);
             border: none;
@@ -763,26 +768,26 @@
         .detail-meta {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .meta-item {
             background: var(--cream);
-            padding: 15px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
         }
 
         .meta-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-light);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .meta-value {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text);
             font-weight: 500;
         }
@@ -795,137 +800,51 @@
             color: var(--warm-brown);
         }
 
-        /* 手机端：上下布局 */
-@media (max-width: 768px) {
-    .detail-modal .form-container {
-        max-width: 100%;
-        max-height: 85vh;
-        margin: 20px;
-        overflow: hidden;
-    }
-
-    .detail-layout {
-        flex-direction: column;
-        min-height: auto;
-        max-height: 85vh;
-    }
-
-    .detail-left {
-        width: 100%;
-        min-height: 200px;
-        max-height: 35vh;
-        flex-shrink: 0;
-    }
-
-    .detail-right {
-        width: 100%;
-        padding: 20px;
-        max-height: 50vh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
-    }
-
-    /* 手机端缩小字体和间距 */
-    .detail-titles h2 {
-        font-size: 1.1rem;
-    }
-
-    .detail-meta {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .meta-item {
-        padding: 10px;
-    }
-
-    .meta-value {
-        font-size: 0.85rem;
-    }
-}
-
-        .detail-scroll-content {
-    min-height: 100%;
-}
-
-@media (max-width: 768px) {
-    .detail-scroll-content {
-        padding-bottom: 20px;
-    }
-    
-    .detail-header {
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-    }
-    
-    .edit-btn {
-        padding: 8px 14px;
-        font-size: 0.8rem;
-    }
-    
-    .progress-section {
-        margin-bottom: 15px;
-    }
-    
-    .note-section {
-        margin-bottom: 15px;
-    }
-    
-    .detail-footer {
-        padding-top: 15px;
-    }
-    
-    .delete-btn {
-        padding: 8px 16px;
-        font-size: 0.8rem;
-    }
-}
-
         .progress-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .progress-label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-light);
         }
 
         .progress-percent {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: var(--forest);
             font-weight: 500;
         }
 
         .progress-bar-large {
-            height: 12px;
+            height: 10px;
             background: #e8e8e8;
-            border-radius: 6px;
+            border-radius: 5px;
             overflow: hidden;
         }
 
         .progress-fill-large {
             height: 100%;
             background: linear-gradient(90deg, var(--mint), var(--forest));
-            border-radius: 6px;
+            border-radius: 5px;
             transition: width 0.5s ease;
         }
 
         .guide-link {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .guide-link a {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 20px;
+            padding: 10px 18px;
             background: var(--soft-green);
             color: var(--deep-green);
             text-decoration: none;
@@ -940,32 +859,32 @@
         }
 
         .note-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .note-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .note-title {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-light);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .note-edit-btn {
-            padding: 6px 16px;
+            padding: 6px 14px;
             background: transparent;
             border: 1.5px solid var(--mint);
             color: var(--forest);
             border-radius: 15px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             transition: all 0.3s;
         }
 
@@ -976,28 +895,27 @@
         .note-content {
             background: var(--cream);
             border-radius: 12px;
-            padding: 20px;
-            min-height: 100px;
+            padding: 15px;
         }
 
         .note-display {
             white-space: pre-wrap;
-            line-height: 1.8;
+            line-height: 1.7;
             color: var(--text);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .note-edit-area {
             display: none;
             width: 100%;
-            min-height: 120px;
+            min-height: 100px;
             background: white;
             border: 2px solid var(--mint);
             border-radius: 10px;
-            padding: 15px;
+            padding: 12px;
             color: var(--text);
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             resize: vertical;
         }
 
@@ -1012,19 +930,19 @@
         .note-actions {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 12px;
         }
 
         .note-actions button {
-            padding: 10px 24px;
-            border-radius: 10px;
+            padding: 8px 20px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .detail-footer {
-            padding-top: 20px;
+            padding-top: 15px;
             border-top: 1px solid #f0f0f0;
             display: flex;
             justify-content: space-between;
@@ -1032,18 +950,18 @@
         }
 
         .added-time {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-light);
         }
 
         .delete-btn {
-            padding: 10px 24px;
+            padding: 8px 18px;
             background: #ffebee;
             color: #c62828;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.3s;
         }
 
@@ -1051,6 +969,117 @@
             background: #ffcdd2;
         }
 
+        /* ========== 手机端适配 ========== */
+        @media (max-width: 768px) {
+            .detail-modal {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .detail-modal .form-container {
+                max-width: 100%;
+                width: 100%;
+                max-height: 90vh;
+                border-radius: 20px 20px 0 0;
+                margin: 0;
+            }
+
+            .detail-layout {
+                flex-direction: column;
+                height: 90vh;
+                max-height: none;
+            }
+
+            .detail-left {
+                width: 100%;
+                height: 35vh;
+                min-height: 200px;
+                max-height: 280px;
+            }
+
+            .detail-right {
+                width: 100%;
+                height: 55vh;
+                padding: 20px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .detail-scroll-content {
+                padding-bottom: 30px;
+            }
+
+            .detail-header {
+                margin-bottom: 15px;
+                padding-bottom: 12px;
+            }
+
+            .detail-titles h2 {
+                font-size: 1.1rem;
+            }
+
+            .detail-titles .original-title {
+                font-size: 0.8rem;
+            }
+
+            .edit-btn {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+
+            .detail-meta {
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .meta-item {
+                padding: 10px;
+            }
+
+            .meta-label {
+                font-size: 0.65rem;
+            }
+
+            .meta-value {
+                font-size: 0.85rem;
+            }
+
+            .progress-section {
+                margin-bottom: 15px;
+            }
+
+            .progress-percent {
+                font-size: 1.1rem;
+            }
+
+            .guide-link {
+                margin-bottom: 15px;
+            }
+
+            .guide-link a {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+
+            .note-section {
+                margin-bottom: 15px;
+            }
+
+            .note-content {
+                padding: 12px;
+            }
+
+            .detail-footer {
+                padding-top: 12px;
+            }
+
+            .delete-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* 空状态 */
         .empty-state {
             text-align: center;
             padding: 80px 20px;
@@ -1104,46 +1133,27 @@
             font-family: monospace;
         }
 
-        @media (max-width: 768px) {
-            .detail-layout {
-                flex-direction: column;
-            }
-            
-            .detail-left,
-            .detail-right {
-                width: 100%;
-            }
-            
-            .detail-left {
-                min-height: 300px;
-                max-height: 400px;
-            }
-            
-            .detail-right {
-                max-height: none;
-            }
-            
-            .detail-meta {
-                grid-template-columns: 1fr;
-            }
-        }
-
+        /* 滚动条 */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--cream);
+            background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
             background: var(--mint);
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--leaf);
+        }
+
+        .detail-right::-webkit-scrollbar {
+            width: 4px;
         }
     </style>
 </head>
@@ -1353,7 +1363,6 @@
 
     <script>
 // ============ JSONBin.io 配置 ============
-// 数据存储在 localStorage，首次使用需配置
 function getJSONBinConfig() {
     return {
         BIN_ID: localStorage.getItem('jsonbin_bin_id') || '',
@@ -1373,10 +1382,8 @@ let draggedItem = null;
 document.addEventListener('DOMContentLoaded', async () => {
     const config = getJSONBinConfig();
     
-    // 检查是否已配置
     if (!config.BIN_ID || !config.API_KEY) {
         showToast('⚙️ 请先点击右下角设置按钮配置同步');
-        // 使用本地数据
         games = JSON.parse(localStorage.getItem('games_local')) || [];
         categories = JSON.parse(localStorage.getItem('categories_local')) || ['乙女', '推理', '经营'];
     } else {
@@ -1408,7 +1415,6 @@ async function loadFromJSONBin() {
         games = data.record.games || [];
         categories = data.record.categories || ['乙女', '推理', '经营'];
         
-        // 本地备份
         localStorage.setItem('games_local', JSON.stringify(games));
         localStorage.setItem('categories_local', JSON.stringify(categories));
         
@@ -1419,7 +1425,6 @@ async function loadFromJSONBin() {
         console.error('JSONBin 加载失败:', err);
         showToast('❌ 同步失败，使用本地备份');
         
-        // 使用本地备份
         games = JSON.parse(localStorage.getItem('games_local')) || [];
         categories = JSON.parse(localStorage.getItem('categories_local')) || ['乙女', '推理', '经营'];
         return false;
@@ -1429,7 +1434,6 @@ async function loadFromJSONBin() {
 async function saveToJSONBin() {
     const config = getJSONBinConfig();
     if (!config.BIN_ID || !config.API_KEY) {
-        // 未配置，只存本地
         localStorage.setItem('games_local', JSON.stringify(games));
         localStorage.setItem('categories_local', JSON.stringify(categories));
         return false;
@@ -1447,7 +1451,6 @@ async function saveToJSONBin() {
         
         if (!response.ok) throw new Error('Save failed');
         
-        // 同时本地备份
         localStorage.setItem('games_local', JSON.stringify(games));
         localStorage.setItem('categories_local', JSON.stringify(categories));
         
@@ -1458,7 +1461,6 @@ async function saveToJSONBin() {
         console.error('JSONBin 保存失败:', err);
         showToast('❌ 云端同步失败，已本地备份');
         
-        // 失败时存本地
         localStorage.setItem('games_local', JSON.stringify(games));
         localStorage.setItem('categories_local', JSON.stringify(categories));
         return false;
@@ -1482,14 +1484,12 @@ async function saveConfig() {
         return;
     }
     
-    // 保存配置
     localStorage.setItem('jsonbin_bin_id', binId);
     localStorage.setItem('jsonbin_api_key', apiKey);
     
     closeModal('configModal');
     showToast('配置已保存，正在测试连接...');
     
-    // 测试连接并加载数据
     const success = await loadFromJSONBin();
     if (success) {
         renderGames();
@@ -1775,7 +1775,6 @@ async function saveGame() {
 
 // ============ 详情页 ============
 function showDetail(id) {
-function showDetail(id) {
     if (dragMode) return;
     const game = games.find(g => g.id === id);
     if (!game) return;
@@ -1799,7 +1798,7 @@ function showDetail(id) {
                         <h2>${game.chineseName || game.originalName}</h2>
                         <div class="original-title">${game.originalName}</div>
                     </div>
-                    <button class="edit-btn" onclick="openEditModal('${game.id}')">✏️</button>
+                    <button class="edit-btn" onclick="openEditModal('${game.id}')">✏️ 编辑</button>
                 </div>
                 <div class="detail-meta">
                     <div class="meta-item">
@@ -1821,7 +1820,7 @@ function showDetail(id) {
                 </div>
                 <div class="progress-section">
                     <div class="progress-header">
-                        <span class="progress-label">进度</span>
+                        <span class="progress-label">游戏进度</span>
                         <span class="progress-percent">${game.progress}%</span>
                     </div>
                     <div class="progress-bar-large">
@@ -1830,11 +1829,11 @@ function showDetail(id) {
                 </div>
                 ${game.guideUrl ? `
                 <div class="guide-link">
-                    <a href="${game.guideUrl}" target="_blank">🔗 攻略</a>
+                    <a href="${game.guideUrl}" target="_blank">🔗 查看攻略</a>
                 </div>` : ''}
                 <div class="note-section">
                     <div class="note-header">
-                        <span class="note-title">📝 笔记</span>
+                        <span class="note-title">📝 游戏笔记</span>
                         <button class="note-edit-btn" id="editNoteBtn" onclick="startEditNote('${game.id}')">编辑</button>
                     </div>
                     <div class="note-content">
@@ -1847,8 +1846,8 @@ function showDetail(id) {
                     </div>
                 </div>
                 <div class="detail-footer">
-                    <span class="added-time">${game.addedAt}</span>
-                    <button class="delete-btn" onclick="deleteGame('${game.id}')">🗑️</button>
+                    <span class="added-time">添加于 ${game.addedAt}</span>
+                    <button class="delete-btn" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
                 </div>
             </div>
         </div>
