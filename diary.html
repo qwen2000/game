@@ -833,6 +833,7 @@
 </head>
 <body>
     <!-- 密码锁屏 -->
+<!-- 密码锁屏 -->
     <div class="lock-screen" id="lockScreen">
         <div class="lock-icon">🔒</div>
         <h2 class="lock-title">我的日记</h2>
@@ -855,13 +856,14 @@
             <button class="numpad-btn" onclick="enterDigit(7)">7</button>
             <button class="numpad-btn" onclick="enterDigit(8)">8</button>
             <button class="numpad-btn" onclick="enterDigit(9)">9</button>
-            <button class="numpad-btn" onclick="clearPassword()" style="font-size: 1rem;">清空</button>
+            <button class="numpad-btn" onclick="clearPassword()" style="font-size: 0.9rem;">清空</button>
             <button class="numpad-btn" onclick="enterDigit(0)">0</button>
             <button class="numpad-btn delete" onclick="deleteDigit()">⌫</button>
         </div>
         
         <p class="lock-hint" onclick="showPasswordSetup()">设置/修改密码</p>
     </div>
+        
 
     <!-- 设置密码弹窗 -->
     <div class="modal" id="passwordSetupModal">
@@ -1126,7 +1128,7 @@ function initLockScreen() {
     updatePasswordDots();
 }
 
-// 输入数字
+// 输入数字（解锁模式）
 function enterDigit(digit) {
     if (currentPassword.length < 4) {
         currentPassword += digit;
@@ -1138,16 +1140,36 @@ function enterDigit(digit) {
     }
 }
 
-// 删除数字
+// 删除数字（解锁模式）
 function deleteDigit() {
     currentPassword = currentPassword.slice(0, -1);
     updatePasswordDots();
 }
 
-// 清空密码
+// 清空密码（解锁模式）
 function clearPassword() {
     currentPassword = '';
     updatePasswordDots();
+}
+
+// 设置密码模式：输入数字
+function setupEnterDigit(digit) {
+    if (tempPassword.length < 4) {
+        tempPassword += digit;
+        document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
+    }
+}
+
+// 设置密码模式：删除
+function setupDeleteDigit() {
+    tempPassword = tempPassword.slice(0, -1);
+    document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
+}
+
+// 设置密码模式：清空
+function setupClearPassword() {
+    tempPassword = '';
+    document.getElementById('newPassword').value = '';
 }
 
 // 更新密码点显示
@@ -1167,7 +1189,6 @@ function checkPassword() {
         // 解锁成功
         document.getElementById('lockScreen').classList.add('hidden');
         document.getElementById('mainContent').style.display = 'block';
-        // 初始化日记内容
         initDiary();
     } else {
         // 密码错误
@@ -1186,56 +1207,53 @@ function checkPassword() {
 function showPasswordSetup() {
     tempPassword = '';
     document.getElementById('newPassword').value = '';
-    document.getElementById('passwordSetupModal').classList.add('active');
     
-    // 创建数字键盘
-    createSetupNumpad();
-}
-
-// 创建设置密码的数字键盘
-function createSetupNumpad() {
-    const input = document.getElementById('newPassword');
-    input.value = '';
-    tempPassword = '';
-    
-    // 点击输入框弹出提示
-    input.onclick = () => {
-        showToast('请使用下方数字键盘输入');
-    };
-}
-
-// 设置密码页面的数字输入（复用主键盘）
-const originalEnterDigit = enterDigit;
-const originalDeleteDigit = deleteDigit;
-const originalClearPassword = clearPassword;
-
-// 修改键盘功能用于设置密码
-function setupPasswordMode() {
+    // 创建设置模式的数字键盘
     const numpad = document.getElementById('numpad');
-    const isSetupMode = document.getElementById('passwordSetupModal').classList.contains('active');
+    numpad.innerHTML = `
+        <button class="numpad-btn" onclick="setupEnterDigit(1)">1</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(2)">2</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(3)">3</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(4)">4</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(5)">5</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(6)">6</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(7)">7</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(8)">8</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(9)">9</button>
+        <button class="numpad-btn" onclick="setupClearPassword()" style="font-size: 0.9rem;">清空</button>
+        <button class="numpad-btn" onclick="setupEnterDigit(0)">0</button>
+        <button class="numpad-btn delete" onclick="setupDeleteDigit()">⌫</button>
+    `;
     
-    if (isSetupMode) {
-        // 设置模式：直接操作输入框
-        window.enterDigit = (d) => {
-            if (tempPassword.length < 4) {
-                tempPassword += d;
-                document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
-            }
-        };
-        window.deleteDigit = () => {
-            tempPassword = tempPassword.slice(0, -1);
-            document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
-        };
-        window.clearPassword = () => {
-            tempPassword = '';
-            document.getElementById('newPassword').value = '';
-        };
-    } else {
-        // 解锁模式：恢复原功能
-        window.enterDigit = originalEnterDigit;
-        window.deleteDigit = originalDeleteDigit;
-        window.clearPassword = originalClearPassword;
-    }
+    // 修改标题和提示
+    document.querySelector('.lock-title').textContent = '设置密码';
+    document.querySelector('.lock-subtitle').textContent = '请输入4位数字密码';
+    document.querySelector('.lock-hint').style.display = 'none';
+    
+    document.getElementById('passwordSetupModal').classList.add('active');
+}
+
+// 恢复解锁键盘
+function restoreUnlockNumpad() {
+    const numpad = document.getElementById('numpad');
+    numpad.innerHTML = `
+        <button class="numpad-btn" onclick="enterDigit(1)">1</button>
+        <button class="numpad-btn" onclick="enterDigit(2)">2</button>
+        <button class="numpad-btn" onclick="enterDigit(3)">3</button>
+        <button class="numpad-btn" onclick="enterDigit(4)">4</button>
+        <button class="numpad-btn" onclick="enterDigit(5)">5</button>
+        <button class="numpad-btn" onclick="enterDigit(6)">6</button>
+        <button class="numpad-btn" onclick="enterDigit(7)">7</button>
+        <button class="numpad-btn" onclick="enterDigit(8)">8</button>
+        <button class="numpad-btn" onclick="enterDigit(9)">9</button>
+        <button class="numpad-btn" onclick="clearPassword()" style="font-size: 0.9rem;">清空</button>
+        <button class="numpad-btn" onclick="enterDigit(0)">0</button>
+        <button class="numpad-btn delete" onclick="deleteDigit()">⌫</button>
+    `;
+    
+    document.querySelector('.lock-title').textContent = '我的日记';
+    document.querySelector('.lock-subtitle').textContent = '请输入密码解锁';
+    document.querySelector('.lock-hint').style.display = 'block';
 }
 
 // 保存密码
@@ -1249,17 +1267,13 @@ function savePassword() {
     closeModal('passwordSetupModal');
     showToast('✅ 密码设置成功');
     
-    // 恢复键盘功能
-    window.enterDigit = originalEnterDigit;
-    window.deleteDigit = originalDeleteDigit;
-    window.clearPassword = originalClearPassword;
+    // 恢复解锁界面
+    restoreUnlockNumpad();
     
-    // 如果之前没有密码，现在解锁
-    if (!hasPassword() || tempPassword === getPassword()) {
-        document.getElementById('lockScreen').classList.add('hidden');
-        document.getElementById('mainContent').style.display = 'block';
-        initDiary();
-    }
+    // 自动解锁
+    document.getElementById('lockScreen').classList.add('hidden');
+    document.getElementById('mainContent').style.display = 'block';
+    initDiary();
 }
 
 // 修改密码
@@ -2021,7 +2035,10 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(setupModal, { attributes: true, attributeFilter: ['class'] });
     
     // 初始化锁屏
+// ============ 启动 ============
+document.addEventListener('DOMContentLoaded', () => {
     initLockScreen();
+});
 });
     </script>
 </body>
