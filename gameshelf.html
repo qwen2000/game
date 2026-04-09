@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的游戏书架</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #fff;
+            padding: 20px;
+        }
+
+        /* 头部 */
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00d4aa, #00a8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        /* 添加按钮 */
+        .add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4aa, #00a8e8);
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.4);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* 弹窗表单 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .form-container {
+            background: #0f3460;
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #00d4aa;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #1a1a2e;
+            border-radius: 10px;
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4aa;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4aa, #00a8e8);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #1a1a2e;
+            color: #a0a0a0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 书架 */
+        .bookshelf {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .shelf-row {
+            background: linear-gradient(180deg, #8b4513 0%, #654321 50%, #4a3018 100%);
+            padding: 20px 30px 40px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 
+                inset 0 10px 20px rgba(0,0,0,0.3),
+                0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .shelf-row::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+        }
+
+        .games-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: flex-start;
+            align-items: flex-end;
+            min-height: 200px;
+        }
+
+        /* 游戏书本 */
+        .game-book {
+            width: 140px;
+            cursor: pointer;
+            transition: all 0.3s;
+            transform-origin: bottom center;
+            position: relative;
+        }
+
+        .game-book:hover {
+            transform: translateY(-15px) scale(1.05);
+            z-index: 10;
+        }
+
+        .book-spine {
+            width: 100%;
+            height: 180px;
+            border-radius: 3px 8px 8px 3px;
+            position: relative;
+            box-shadow: 
+                -5px 5px 15px rgba(0,0,0,0.4),
+                inset 2px 0 5px rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 书脊效果 */
+        .book-spine::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.3) 0%,
+                rgba(255,255,255,0.1) 50%,
+                rgba(0,0,0,0.2) 100%
+            );
+            z-index: 2;
+        }
+
+        /* 封面图片 */
+        .book-cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 无封面时的备用 */
+        .book-no-cover {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+
+        .book-no-cover span {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        /* 书本底部信息 */
+        .book-info {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .book-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-platform {
+            font-size: 0.75rem;
+            color: #00d4aa;
+            margin-top: 3px;
+        }
+
+        /* 详情弹窗 */
+        .detail-modal .form-container {
+            max-width: 400px;
+        }
+
+        .detail-cover {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            color: #fff;
+            word-break: break-all;
+        }
+
+        .detail-value a {
+            color: #00d4aa;
+            text-decoration: none;
+        }
+
+        .detail-value a:hover {
+            text-decoration: underline;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            margin-top: 15px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0a0a0;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* 筛选标签 */
+        .filters {
+            max-width: 1400px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #0f3460;
+            background: transparent;
+            color: #a0a0a0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            border-color: #00d4aa;
+            color: #00d4aa;
+        }
+
+        /* 语言标签 */
+        .lang-tag {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            z-index: 3;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #00d4aa;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎮 我的游戏书架</h1>
+        <p>记录每一段游戏旅程</p>
+    </header>
+
+    <!-- 筛选 -->
+    <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="PC">PC</button>
+        <button class="filter-btn" data-filter="PS5">PS5</button>
+        <button class="filter-btn" data-filter="Switch">Switch</button>
+        <button class="filter-btn" data-filter="Xbox">Xbox</button>
+        <button class="filter-btn" data-filter="Mobile">手机</button>
+    </div>
+
+    <!-- 书架 -->
+    <div class="bookshelf" id="bookshelf">
+        <div class="shelf-row">
+            <div class="games-grid" id="gamesGrid">
+                <div class="empty-state">
+                    <h3>📚 书架是空的</h3>
+                    <p>点击右下角 + 添加你的第一个游戏</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加按钮 -->
+    <button class="add-btn" onclick="openModal()">+</button>
+
+    <!-- 添加表单弹窗 -->
+    <div class="modal" id="addModal">
+        <div class="form-container">
+            <h2>📖 添加游戏</h2>
+            <form id="gameForm">
+                <div class="form-group">
+                    <label>原名称 *</label>
+                    <input type="text" id="originalName" placeholder="The Legend of Zelda" required>
+                </div>
+                <div class="form-group">
+                    <label>中文名称</label>
+                    <input type="text" id="chineseName" placeholder="塞尔达传说">
+                </div>
+                <div class="form-group">
+                    <label>平台 *</label>
+                    <select id="platform" required>
+                        <option value="">选择平台</option>
+                        <option value="PC">PC</option>
+                        <option value="PS5">PS5</option>
+                        <option value="PS4">PS4</option>
+                        <option value="Switch">Switch</option>
+                        <option value="Xbox">Xbox</option>
+                        <option value="Mobile">手机</option>
+                        <option value="Other">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>语言</label>
+                    <select id="language">
+                        <option value="中文">中文</option>
+                        <option value="英文">英文</option>
+                        <option value="日文">日文</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>封面链接</label>
+                    <input type="url" id="coverUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>攻略链接</label>
+                    <input type="url" id="guideUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>进度 (%)</label>
+                    <input type="number" id="progress" min="0" max="100" value="0">
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea id="note" placeholder="游戏心得、进度记录..."></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 详情弹窗 -->
+    <div class="modal detail-modal" id="detailModal">
+        <div class="form-container" id="detailContent">
+            <!-- 动态填充 -->
+        </div>
+    </div>
+
+    <script>
+        // 数据存储
+        let games = JSON.parse(localStorage.getItem('myGames')) || [];
+        let currentFilter = 'all';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGames();
+            initFilters();
+        });
+
+        // 渲染游戏列表
+        function renderGames() {
+            const grid = document.getElementById('gamesGrid');
+            const filtered = currentFilter === 'all' 
+                ? games 
+                : games.filter(g => g.platform === currentFilter);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>${currentFilter === 'all' ? '📚 书架是空的' : '😕 该平台暂无游戏'}</h3>
+                        <p>${currentFilter === 'all' ? '点击右下角 + 添加你的第一个游戏' : '尝试添加或切换其他平台'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(game => `
+                <div class="game-book" onclick="showDetail('${game.id}')">
+                    <div class="book-spine">
+                        ${game.coverUrl ? `
+                            <img src="${game.coverUrl}" class="book-cover-img" alt="${game.chineseName || game.originalName}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'book-no-cover\\'><span>${game.chineseName || game.originalName}</span></div>'">
+                        ` : `
+                            <div class="book-no-cover">
+                                <span>${game.chineseName || game.originalName}</span>
+                            </div>
+                        `}
+                        <span class="lang-tag">${game.language}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${game.progress}%"></div>
+                        </div>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">${game.chineseName || game.originalName}</div>
+                        <div class="book-platform">${game.platform}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 筛选功能
+        function initFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderGames();
+                });
+            });
+        }
+
+        // 打开添加弹窗
+        function openModal() {
+            document.getElementById('addModal').classList.add('active');
+            document.getElementById('gameForm').reset();
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+        });
+
+        // 提交表单
+        document.getElementById('gameForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const game = {
+                id: Date.now().toString(),
+                originalName: document.getElementById('originalName').value,
+                chineseName: document.getElementById('chineseName').value,
+                platform: document.getElementById('platform').value,
+                language: document.getElementById('language').value,
+                coverUrl: document.getElementById('coverUrl').value,
+                guideUrl: document.getElementById('guideUrl').value,
+                progress: document.getElementById('progress').value || 0,
+                note: document.getElementById('note').value,
+                addedAt: new Date().toLocaleString()
+            };
+
+            games.unshift(game);
+            localStorage.setItem('myGames', JSON.stringify(games));
+            renderGames();
+            closeModal();
+        });
+
+        // 显示详情
+        function showDetail(id) {
+            const game = games.find(g => g.id === id);
+            if (!game) return;
+
+            const content = document.getElementById('detailContent');
+            content.innerHTML = `
+                <h2>🎮 游戏详情</h2>
+                ${game.coverUrl ? `<img src="${game.coverUrl}" class="detail-cover" onerror="this.style.display='none'">` : ''}
+                
+                <div class="detail-item">
+                    <div class="detail-label">原名称</div>
+                    <div class="detail-value">${game.originalName}</div>
+                </div>
+                
+                ${game.chineseName ? `
+                <div class="detail-item">
+                    <div class="detail-label">中文名称</div>
+                    <div class="detail-value">${game.chineseName}</div>
+                </div>
+                ` : ''}
+                
+                <div class="detail-item">
+                    <div class="detail-label">平台</div>
+                    <div class="detail-value">${game.platform}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">语言</div>
+                    <div class="detail-value">${game.language}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">进度</div>
+                    <div class="detail-value">
+                        <div style="background: #1a1a2e; height: 8px; border-radius: 4px; margin-top: 5px;">
+                            <div style="background: #00d4aa; height: 100%; width: ${game.progress}%; border-radius: 4px;"></div>
+                        </div>
+                        <span style="font-size: 0.85rem; color: #a0a0a0;">${game.progress}%</span>
+                    </div>
+                </div>
+                
+                ${game.guideUrl ? `
+                <div class="detail-item">
+                    <div class="detail-label">攻略链接</div>
+                    <div class="detail-value"><a href="${game.guideUrl}" target="_blank">${game.guideUrl}</a></div>
+                </div>
+                ` : ''}
+                
+                ${game.note ? `
+                <div class="detail-item">
+                    <div class="detail-label">备注</div>
+                    <div class="detail-value" style="white-space: pre-wrap;">${game.note}</div>
+                </div>
+                ` : ''}
+                
+                <div class="detail-item">
+                    <div class="detail-label">添加时间</div>
+                    <div class="detail-value" style="color: #a0a0a0; font-size: 0.85rem;">${game.addedAt}</div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                    <button type="button" class="btn delete-btn" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
+                </div>
+            `;
+            
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        // 删除游戏
+        function deleteGame(id) {
+            if (!confirm('确定要删除这个游戏吗？')) return;
+            games = games.filter(g => g.id !== id);
+            localStorage.setItem('myGames', JSON.stringify(games));
+            renderGames();
+            closeModal();
+        }
+
+        // ESC 关闭弹窗
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
