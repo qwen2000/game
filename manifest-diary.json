@@ -1,0 +1,22 @@
+{
+  "name": "我的日记",
+  "short_name": "日记",
+  "description": "记录生活点滴",
+  "start_url": "./diary.html",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#90caf9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
