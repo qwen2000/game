@@ -1746,6 +1746,8 @@ function openEditModal(id) {
 
 async function saveGame() {
     const id = document.getElementById('editId').value;
+    const now = new Date().toLocaleString();
+    
     const gameData = {
         originalName: document.getElementById('originalName').value,
         chineseName: document.getElementById('chineseName').value,
@@ -1759,11 +1761,26 @@ async function saveGame() {
     };
     
     if (id) {
+        // 编辑现有游戏：删除原位置，添加到最前面
         const index = games.findIndex(g => g.id === id);
-        games[index] = { ...games[index], ...gameData };
+        const existingGame = games[index];
+        
+        // 合并数据，更新编辑时间
+        const updatedGame = { 
+            ...existingGame, 
+            ...gameData,
+            updatedAt: now  // 记录编辑时间
+        };
+        
+        // 删除原位置，置顶
+        games.splice(index, 1);
+        games.unshift(updatedGame);
+        
     } else {
+        // 新增游戏
         gameData.id = Date.now().toString();
-        gameData.addedAt = new Date().toLocaleString();
+        gameData.addedAt = now;
+        gameData.updatedAt = now;
         games.unshift(gameData);
     }
     
@@ -1846,7 +1863,10 @@ function showDetail(id) {
                     </div>
                 </div>
                 <div class="detail-footer">
-                    <span class="added-time">添加于 ${game.addedAt}</span>
+                    <span class="added-time">
+                    添加于 ${game.addedAt}
+                    ${game.updatedAt && game.updatedAt !== game.addedAt ? `<br>编辑于 ${game.updatedAt}` : ''}
+                    </span>
                     <button class="delete-btn" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
                 </div>
             </div>
@@ -1864,8 +1884,16 @@ function startEditNote(id) {
 
 async function saveNote(id) {
     const newNote = document.getElementById('noteEditArea').value;
-    const game = games.find(g => g.id === id);
-    game.note = newNote;
+    const index = games.findIndex(g => g.id === id);
+    
+    // 更新笔记和编辑时间，置顶
+    games[index].note = newNote;
+    games[index].updatedAt = new Date().toLocaleString();
+    
+    // 移到最前面
+    const updatedGame = games.splice(index, 1)[0];
+    games.unshift(updatedGame);
+    
     await saveToJSONBin();
     renderGames();
     cancelEditNote();
