@@ -10,10 +10,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="日记">
     <link rel="apple-touch-icon" href="diary-icon-192.png">
-    <!-- 放在 PDF 库之前 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- 中文字体支持 -->
-<script src="https://cdn.jsdelivr.net/npm/jspdf-fonts@1.0.1/chinese-normal.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -766,6 +762,89 @@
             100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
         }
 
+        /* PDF 渲染容器（隐藏） */
+        .pdf-render-container {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 794px;
+            background: white;
+            padding: 60px;
+            font-family: "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        .pdf-page {
+            width: 674px;
+            min-height: 1000px;
+            padding-bottom: 40px;
+            page-break-after: always;
+        }
+
+        .pdf-page:last-child {
+            page-break-after: auto;
+        }
+
+        .pdf-date {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pdf-title {
+            color: #1a237e;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .pdf-content {
+            color: #37474f;
+            font-size: 16px;
+            white-space: pre-wrap;
+            margin-bottom: 25px;
+            line-height: 1.9;
+        }
+
+        .pdf-images {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pdf-images img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .pdf-cover {
+            text-align: center;
+            padding: 150px 0;
+        }
+
+        .pdf-cover h1 {
+            font-size: 48px;
+            color: #1a237e;
+            font-weight: 300;
+            margin-bottom: 40px;
+        }
+
+        .pdf-cover .date-range {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .pdf-cover .count {
+            color: #999;
+            font-size: 16px;
+        }
+
         /* 响应式 */
         @media (max-width: 600px) {
             .form-container {
@@ -1008,7 +1087,10 @@
         <div style="margin-top: 15px; color: var(--deep-blue);">同步中...</div>
     </div>
 
-    <!-- PDF 库 -->
+    <!-- PDF 渲染容器（隐藏） -->
+    <div class="pdf-render-container" id="pdfContainer"></div>
+
+    <!-- 依赖库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -1565,7 +1647,7 @@ function updateStats() {
     document.getElementById('imageCount').textContent = imageCount;
 }
 
-// ============ PDF 导出 ============
+// ============ PDF 导出（修复中文） ============
 function openExportModal() {
     const now = new Date();
     const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -1618,14 +1700,6 @@ function updateExportPreview() {
     }).join('') + (filtered.length > 5 ? `<div style="text-align: center; color: var(--text-light); padding-top: 8px;">还有 ${filtered.length - 5} 篇...</div>` : '');
 }
 
-// ============ PDF 导出（修复中文） ============
-
-// 加载中文字体（使用 Base64 编码的思源黑体轻量版）
-const CHINESE_FONT = {
-    // 这里使用一个简化的中文字体方案
-    // 实际使用需要加载字体文件，我们用替代方案：使用 html2canvas 生成图片再转 PDF
-};
-
 async function generatePDF() {
     const startDate = new Date(document.getElementById('exportStartDate').value);
     const endDate = new Date(document.getElementById('exportEndDate').value);
@@ -1639,37 +1713,51 @@ async function generatePDF() {
         return entryDate >= startDate && entryDate <= endDate;
     }).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     
-    if (filtered.length === 0) {
-        alert('该时间段没有日记');
-        return;
-    }
-    
     closeModal('exportModal');
     document.getElementById('pdfProgressModal').classList.add('active');
     
-    // 方案：使用 html2canvas 生成每页图片，再合并为 PDF
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     
-    // A4 尺寸：210mm x 297mm，留白 10mm
+    // A4 尺寸
     const pageWidth = 210;
     const pageHeight = 297;
-    const margin = 15;
+    const margin = 20;
     const contentWidth = pageWidth - margin * 2;
     
-    // 创建临时容器用于渲染
-    const tempContainer = document.createElement('div');
-    tempContainer.style.cssText = `
-        position: fixed;
-        left: -9999px;
-        top: 0;
-        width: 794px; /* 210mm * 3.78 */
-        background: white;
-        padding: 40px;
-        font-family: "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
-    `;
-    document.body.appendChild(tempContainer);
+    // 创建临时渲染容器
+    const container = document.getElementById('pdfContainer');
+    container.innerHTML = '';
+    container.style.display = 'block';
     
+    // 生成封面
+    const coverDiv = document.createElement('div');
+    coverDiv.className = 'pdf-page pdf-cover';
+    coverDiv.innerHTML = `
+        <h1>我的日记</h1>
+        <div class="date-range">${formatDateCN(startDate)} - ${formatDateCN(endDate)}</div>
+        <div class="count">共 ${filtered.length} 篇</div>
+    `;
+    container.appendChild(coverDiv);
+    
+    // 等待封面渲染
+    await new Promise(r => setTimeout(r, 100));
+    
+    // 渲染封面为图片
+    const coverCanvas = await html2canvas(coverDiv, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: 1123
+    });
+    
+    const coverImg = coverCanvas.toDataURL('image/png');
+    const coverHeight = (coverCanvas.height * contentWidth) / coverCanvas.width;
+    pdf.addImage(coverImg, 'PNG', margin, margin, contentWidth, Math.min(coverHeight, pageHeight - margin * 2));
+    
+    // 生成每页日记
     for (let i = 0; i < filtered.length; i++) {
         updatePDFProgress(((i + 1) / filtered.length * 100).toFixed(0), `正在生成第 ${i + 1}/${filtered.length} 页...`);
         
@@ -1677,64 +1765,59 @@ async function generatePDF() {
         const date = new Date(entry.createdAt);
         const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
         
-        // 构建 HTML 内容
+        // 创建页面内容
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'pdf-page';
+        
         let html = `
-            <div style="color: #666; font-size: 14px; margin-bottom: 20px;">
-                ${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}
-            </div>
+            <div class="pdf-date">${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}</div>
         `;
         
         if (includeTitle && entry.title) {
-            html += `<h1 style="color: #1a237e; font-size: 28px; margin-bottom: 20px; font-weight: 400;">${escapeHtml(entry.title)}</h1>`;
+            html += `<div class="pdf-title">${escapeHtml(entry.title)}</div>`;
         }
         
-        html += `<div style="color: #37474f; font-size: 16px; line-height: 1.8; white-space: pre-wrap; margin-bottom: 20px;">${escapeHtml(entry.content)}</div>`;
+        html += `<div class="pdf-content">${escapeHtml(entry.content)}</div>`;
         
-        // 添加图片
         if (includeImages && entry.images && entry.images.length) {
-            html += '<div style="display: flex; gap: 10px; flex-wrap: wrap;">';
-            for (const img of entry.images.slice(0, 6)) {
-                html += `<img src="${img}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px;">`;
+            html += '<div class="pdf-images">';
+            for (const img of entry.images.slice(0, 4)) {
+                html += `<img src="${img}" crossorigin="anonymous">`;
             }
             html += '</div>';
         }
         
-        tempContainer.innerHTML = html;
+        pageDiv.innerHTML = html;
+        container.appendChild(pageDiv);
         
         // 等待图片加载
-        await waitForImages(tempContainer);
+        await waitForImages(pageDiv);
         
-        // 使用 html2canvas 渲染
-        const canvas = await html2canvas(tempContainer, {
+        // 渲染为 canvas
+        const canvas = await html2canvas(pageDiv, {
             scale: 2,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: '#ffffff'
+            backgroundColor: '#ffffff',
+            width: 794,
+            height: Math.max(1123, pageDiv.scrollHeight)
         });
         
-        // 计算缩放以适应页面
+        // 添加新页
+        pdf.addPage();
+        
         const imgData = canvas.toDataURL('image/png');
         const imgHeight = (canvas.height * contentWidth) / canvas.width;
         
-        // 如果内容超出页面，需要分页处理
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfImgWidth = contentWidth;
-        const pdfImgHeight = (imgProps.height * pdfImgWidth) / imgProps.width;
+        pdf.addImage(imgData, 'PNG', margin, margin, contentWidth, Math.min(imgHeight, pageHeight - margin * 2));
         
-        // 添加新页（除了第一页）
-        if (i > 0) {
-            pdf.addPage();
-        }
-        
-        // 居中绘制
-        const x = margin;
-        const y = margin;
-        
-        pdf.addImage(imgData, 'PNG', x, y, pdfImgWidth, Math.min(pdfImgHeight, pageHeight - margin * 2));
+        // 清理
+        container.removeChild(pageDiv);
     }
     
-    // 清理
-    document.body.removeChild(tempContainer);
+    // 隐藏容器
+    container.style.display = 'none';
+    container.innerHTML = '';
     
     // 保存
     const fileName = `日记_${formatDateForInput(startDate)}_至_${formatDateForInput(endDate)}.pdf`;
@@ -1744,24 +1827,16 @@ async function generatePDF() {
     showToast('✅ PDF 导出成功');
 }
 
-// 等待图片加载完成
 function waitForImages(container) {
     const images = container.querySelectorAll('img');
     const promises = Array.from(images).map(img => {
-        if (img.complete) return Promise.resolve();
-        return new Promise((resolve, reject) => {
+        if (img.complete && img.naturalHeight !== 0) return Promise.resolve();
+        return new Promise((resolve) => {
             img.onload = resolve;
-            img.onerror = resolve; // 错误也继续
+            img.onerror = resolve;
         });
     });
     return Promise.all(promises);
-}
-    
-    const fileName = `日记_${formatDateForInput(startDate)}_至_${formatDateForInput(endDate)}.pdf`;
-    doc.save(fileName);
-    
-    closeModal('pdfProgressModal');
-    showToast('✅ PDF 导出成功');
 }
 
 function updatePDFProgress(percent, status) {
@@ -1771,27 +1846,6 @@ function updatePDFProgress(percent, status) {
 
 function formatDateCN(date) {
     return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
-}
-
-function getWeekday(date) {
-    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-    return weekdays[date.getDay()];
-}
-
-function loadImage(src) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            canvas.getContext('2d').drawImage(img, 0, 0);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-        };
-        img.onerror = reject;
-        img.src = src;
-    });
 }
 
 // ============ 工具函数 ============
