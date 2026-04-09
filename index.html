@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Welcome | 个人主页</title>
     <style>
         * {
             margin: 0;
@@ -11,63 +11,284 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --cream: #fefcf8;
+            --soft-pink: #fce4ec;
+            --dusty-pink: #f8bbd9;
+            --sage: #e8f5e9;
+            --soft-green: #c8e6c9;
+            --sky: #e3f2fd;
+            --soft-blue: #bbdefb;
+            --lavender: #f3e5f5;
+            --peach: #ffecb3;
+            --warm-gray: #8d6e63;
+            --text: #5d5d5d;
+            --text-light: #8a8a8a;
+            --shadow: rgba(0,0,0,0.05);
+        }
+
         body {
+            min-height: 100vh;
+            background: var(--cream);
+            font-family: 'Hiragino Sans', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* 装饰背景 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-decoration::before {
+            content: '❀';
+            position: absolute;
+            top: 10%;
+            left: 8%;
+            font-size: 2rem;
+            color: var(--soft-pink);
+            opacity: 0.4;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-decoration::after {
+            content: '❀';
+            position: absolute;
+            top: 20%;
+            right: 12%;
+            font-size: 1.5rem;
+            color: var(--soft-green);
+            opacity: 0.35;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        .bg-decoration .flower-3 {
+            position: absolute;
+            bottom: 15%;
+            left: 15%;
+            font-size: 1.8rem;
+            color: var(--soft-blue);
+            opacity: 0.3;
+            animation: float 7s ease-in-out infinite 1s;
+        }
+
+        .bg-decoration .flower-4 {
+            position: absolute;
+            bottom: 25%;
+            right: 10%;
+            font-size: 1.3rem;
+            color: var(--lavender);
+            opacity: 0.35;
+            animation: float 5s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            justify-content: center;
+            padding: 40px 20px;
         }
 
-        h1 {
-            color: white;
-            font-size: 4rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: bounce 2s infinite;
+        /* 标题区 */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
         }
 
-        p {
-            color: rgba(255,255,255,0.9);
-            font-size: 1.2rem;
-            margin-top: 1rem;
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: var(--warm-gray);
+            letter-spacing: 0.2em;
+            margin-bottom: 15px;
         }
 
-        .btn {
-            margin-top: 2rem;
-            padding: 12px 32px;
-            background: white;
-            color: #764ba2;
-            border: none;
-            border-radius: 25px;
+        .header .subtitle {
             font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            color: var(--text-light);
+            letter-spacing: 0.15em;
         }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        .divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--soft-pink), var(--soft-green));
+            margin: 30px auto;
+            border-radius: 1px;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        /* 导航卡片 */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .nav-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px 30px;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--soft-pink), var(--dusty-pink));
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        }
+
+        .nav-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .nav-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .nav-card h2 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--warm-gray);
+        }
+
+        .nav-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .nav-card .arrow {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dusty-pink);
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .nav-card:hover .arrow {
+            background: var(--soft-pink);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* 页脚 */
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        .footer .heart {
+            color: var(--dusty-pink);
+        }
+
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>👋 Hello World!</h1>
-    <p>我的第一个 GitHub Pages 网站</p>
-    <button class="btn" onclick="alert('你好！')">点我一下</button>
+    <div class="bg-decoration">
+        <span class="flower-3">❀</span>
+        <span class="flower-4">❀</span>
+    </div>
 
-    <script>
-        console.log('Hello World from GitHub Pages!');
-        
-        // 显示当前时间
-        const now = new Date();
-        console.log('页面加载时间：', now.toLocaleString());
-    </script>
+    <div class="container">
+        <header class="header">
+            <h1>私人仓库</h1>
+            <p class="subtitle">Welcome to My Personal Space</p>
+            <div class="divider"></div>
+        </header>
+
+        <nav class="nav-grid">
+            <!-- 游戏书架 -->
+            <a href="gameshelf.html" class="nav-card">
+                <span class="icon">🎮</span>
+                <h2>ゲーム棚</h2>
+                <p>记录游戏旅程，管理收藏进度<br>乙女、推理、经营游戏专属书架</p>
+                <span class="arrow">→</span>
+            </a>
+
+            <!-- 占位：未来可扩展 -->
+            <a href="#" class="nav-card" onclick="alert('敬请期待~'); return false;">
+                <span class="icon">📚</span>
+                <h2>読書記録</h2>
+                <p>阅读记录与书评<br>（开发中）</p>
+                <span class="arrow">→</span>
+            </a>
+
+            <a href="#" class="nav-card" onclick="alert('敬请期待~'); return false;">
+                <span class="icon">🎨</span>
+                <h2>創作スペース</h2>
+                <p>个人创作与作品展示<br>（开发中）</p>
+                <span class="arrow">→</span>
+            </a>
+
+            <a href="#" class="nav-card" onclick="alert('敬请期待~'); return false;">
+                <span class="icon">📝</span>
+                <h2>日記</h2>
+                <p>生活随笔与思考<br>（开发中）</p>
+                <span class="arrow">→</span>
+            </a>
+        </nav>
+
+        <footer class="footer">
+            <p>Made with <span class="heart">♥</span> in 2024</p>
+        </footer>
+    </div>
 </body>
 </html>
