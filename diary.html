@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<!-- 放在 </head> 前 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -16,6 +19,78 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        /* 导出按钮 */
+.export-btn {
+    position: fixed;
+    bottom: 170px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    color: var(--deep-blue);
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow);
+    transition: all 0.3s;
+    z-index: 100;
+}
+
+.export-btn:hover {
+    transform: scale(1.1);
+}
+
+/* 导出预览 */
+.export-preview {
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.preview-list {
+    font-size: 0.9rem;
+}
+
+.preview-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.preview-item:last-child {
+    border-bottom: none;
+}
+
+.preview-date {
+    color: var(--deep-blue);
+    font-weight: 500;
+}
+
+.preview-title {
+    color: var(--text-light);
+    flex: 1;
+    margin-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
         :root {
             --cream: #f5f7fa;
@@ -275,6 +350,66 @@
             transform: scale(1.1) rotate(90deg);
         }
 
+<!-- 导出按钮 -->
+<button class="export-btn" onclick="openExportModal()" title="导出PDF">📄</button>
+
+<!-- 导出弹窗 -->
+<div class="modal" id="exportModal">
+    <div class="form-container" style="max-width: 500px;">
+        <h2>📄 导出日记为 PDF</h2>
+        
+        <div class="form-group">
+            <label>时间范围</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="date" id="exportStartDate" style="flex: 1;">
+                <span>至</span>
+                <input type="date" id="exportEndDate" style="flex: 1;">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>导出选项</label>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="includeImages" checked>
+                    <span>包含图片</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="includeTitle" checked>
+                    <span>显示标题</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="export-preview" id="exportPreview">
+            <div class="preview-header">
+                <span>📋 预览</span>
+                <span id="previewCount">0 篇日记</span>
+            </div>
+            <div class="preview-list" id="previewList">
+                请选择时间范围
+            </div>
+        </div>
+        
+        <div class="form-buttons">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('exportModal')">取消</button>
+            <button type="button" class="btn btn-primary" onclick="generatePDF()" id="generateBtn" disabled>生成 PDF</button>
+        </div>
+    </div>
+</div>
+
+<!-- PDF 生成进度 -->
+<div class="modal" id="pdfProgressModal">
+    <div class="form-container" style="max-width: 400px; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 15px;">📄</div>
+        <h3 style="margin-bottom: 10px;">正在生成 PDF...</h3>
+        <div class="progress-bar" style="height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; margin: 20px 0;">
+            <div id="pdfProgress" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--light-blue), var(--deep-blue)); transition: width 0.3s;"></div>
+        </div>
+        <p id="pdfStatus" style="color: var(--text-light); font-size: 0.9rem;">准备中...</p>
+    </div>
+</div>
+        
         /* 设置按钮 */
         .settings-btn {
             position: fixed;
@@ -1052,6 +1187,186 @@ document.addEventListener('keydown', (e) => {
         closeImageViewer();
     }
 });
+
+// ============ PDF 导出功能 ============
+
+function openExportModal() {
+    // 设置默认日期范围（本月）
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    document.getElementById('exportStartDate').value = formatDateForInput(firstDay);
+    document.getElementById('exportEndDate').value = formatDateForInput(now);
+    
+    updateExportPreview();
+    document.getElementById('exportModal').classList.add('active');
+    
+    // 监听日期变化
+    document.getElementById('exportStartDate').onchange = updateExportPreview;
+    document.getElementById('exportEndDate').onchange = updateExportPreview;
+}
+
+function formatDateForInput(date) {
+    return date.toISOString().split('T')[0];
+}
+
+function updateExportPreview() {
+    const startDate = new Date(document.getElementById('exportStartDate').value);
+    const endDate = new Date(document.getElementById('exportEndDate').value);
+    endDate.setHours(23, 59, 59, 999); // 包含结束日当天
+    
+    const filtered = entries.filter(e => {
+        const entryDate = new Date(e.createdAt);
+        return entryDate >= startDate && entryDate <= endDate;
+    });
+    
+    const previewList = document.getElementById('previewList');
+    const previewCount = document.getElementById('previewCount');
+    const generateBtn = document.getElementById('generateBtn');
+    
+    previewCount.textContent = `${filtered.length} 篇日记`;
+    generateBtn.disabled = filtered.length === 0;
+    
+    if (filtered.length === 0) {
+        previewList.innerHTML = '<div style="color: var(--text-light); text-align: center; padding: 20px;">该时间段没有日记</div>';
+        return;
+    }
+    
+    previewList.innerHTML = filtered.slice(0, 5).map(e => {
+        const date = new Date(e.createdAt);
+        const title = e.title || '无标题';
+        return `
+            <div class="preview-item">
+                <span class="preview-date">${date.getMonth() + 1}/${date.getDate()}</span>
+                <span class="preview-title">${title}</span>
+            </div>
+        `;
+    }).join('') + (filtered.length > 5 ? `<div style="text-align: center; color: var(--text-light); padding-top: 8px;">还有 ${filtered.length - 5} 篇...</div>` : '');
+}
+
+async function generatePDF() {
+    const startDate = new Date(document.getElementById('exportStartDate').value);
+    const endDate = new Date(document.getElementById('exportEndDate').value);
+    endDate.setHours(23, 59, 59, 999);
+    
+    const includeImages = document.getElementById('includeImages').checked;
+    const includeTitle = document.getElementById('includeTitle').checked;
+    
+    const filtered = entries.filter(e => {
+        const entryDate = new Date(e.createdAt);
+        return entryDate >= startDate && entryDate <= endDate;
+    }).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // 按时间正序
+    
+    closeModal('exportModal');
+    document.getElementById('pdfProgressModal').classList.add('active');
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    
+    // 封面
+    doc.setFontSize(24);
+    doc.text('我的日记', 105, 60, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    const dateRangeText = `${formatDateCN(startDate)} - ${formatDateCN(endDate)}`;
+    doc.text(dateRangeText, 105, 80, { align: 'center' });
+    doc.text(`共 ${filtered.length} 篇`, 105, 90, { align: 'center' });
+    
+    doc.addPage();
+    
+    // 生成内容
+    for (let i = 0; i < filtered.length; i++) {
+        const entry = filtered[i];
+        const progress = ((i + 1) / filtered.length * 100).toFixed(0);
+        
+        updatePDFProgress(progress, `正在生成第 ${i + 1}/${filtered.length} 页...`);
+        
+        // 检查是否需要新页面
+        if (i > 0) {
+            doc.addPage();
+        }
+        
+        // 日期标题
+        const date = new Date(entry.createdAt);
+        doc.setFontSize(10);
+        doc.setTextColor(150);
+        doc.text(formatDateCN(date) + ' ' + getWeekday(date), 20, 20);
+        
+        // 标题
+        let yPos = 35;
+        if (includeTitle && entry.title) {
+            doc.setFontSize(16);
+            doc.setTextColor(50);
+            doc.text(entry.title, 20, yPos);
+            yPos += 12;
+        }
+        
+        // 内容
+        doc.setFontSize(11);
+        doc.setTextColor(80);
+        const contentLines = doc.splitTextToSize(entry.content, 170);
+        doc.text(contentLines, 20, yPos);
+        yPos += contentLines.length * 6 + 10;
+        
+        // 图片
+        if (includeImages && entry.images && entry.images.length) {
+            for (let j = 0; j < Math.min(entry.images.length, 3); j++) {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 30;
+                }
+                
+                try {
+                    const imgData = await loadImage(entry.images[j]);
+                    const imgWidth = 60;
+                    const imgHeight = 60;
+                    doc.addImage(imgData, 'JPEG', 20 + j * 65, yPos, imgWidth, imgHeight);
+                } catch (e) {
+                    console.error('图片加载失败:', e);
+                }
+            }
+        }
+    }
+    
+    // 保存
+    const fileName = `日记_${formatDateForInput(startDate)}_至_${formatDateForInput(endDate)}.pdf`;
+    doc.save(fileName);
+    
+    closeModal('pdfProgressModal');
+    showToast('✅ PDF 导出成功');
+}
+
+function updatePDFProgress(percent, status) {
+    document.getElementById('pdfProgress').style.width = percent + '%';
+    document.getElementById('pdfStatus').textContent = status;
+}
+
+function formatDateCN(date) {
+    return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+}
+
+function getWeekday(date) {
+    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    return weekdays[date.getDay()];
+}
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+        };
+        img.onerror = reject;
+        img.src = src;
+    });
+}
+    
     </script>
 </body>
 </html>
