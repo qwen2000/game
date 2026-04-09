@@ -1618,6 +1618,14 @@ function updateExportPreview() {
     }).join('') + (filtered.length > 5 ? `<div style="text-align: center; color: var(--text-light); padding-top: 8px;">还有 ${filtered.length - 5} 篇...</div>` : '');
 }
 
+// ============ PDF 导出（修复中文） ============
+
+// 加载中文字体（使用 Base64 编码的思源黑体轻量版）
+const CHINESE_FONT = {
+    // 这里使用一个简化的中文字体方案
+    // 实际使用需要加载字体文件，我们用替代方案：使用 html2canvas 生成图片再转 PDF
+};
+
 async function generatePDF() {
     const startDate = new Date(document.getElementById('exportStartDate').value);
     const endDate = new Date(document.getElementById('exportEndDate').value);
@@ -1631,69 +1639,123 @@ async function generatePDF() {
         return entryDate >= startDate && entryDate <= endDate;
     }).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     
+    if (filtered.length === 0) {
+        alert('该时间段没有日记');
+        return;
+    }
+    
     closeModal('exportModal');
     document.getElementById('pdfProgressModal').classList.add('active');
     
+    // 方案：使用 html2canvas 生成每页图片，再合并为 PDF
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
+    const pdf = new jsPDF('p', 'mm', 'a4');
     
-    // 封面
-    doc.setFontSize(24);
-    doc.text('我的日记', 105, 60, { align: 'center' });
+    // A4 尺寸：210mm x 297mm，留白 10mm
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 15;
+    const contentWidth = pageWidth - margin * 2;
     
-    doc.setFontSize(12);
-    doc.setTextColor(100);
-    const dateRangeText = `${formatDateCN(startDate)} - ${formatDateCN(endDate)}`;
-    doc.text(dateRangeText, 105, 80, { align: 'center' });
-    doc.text(`共 ${filtered.length} 篇`, 105, 90, { align: 'center' });
-    
-    doc.addPage();
+    // 创建临时容器用于渲染
+    const tempContainer = document.createElement('div');
+    tempContainer.style.cssText = `
+        position: fixed;
+        left: -9999px;
+        top: 0;
+        width: 794px; /* 210mm * 3.78 */
+        background: white;
+        padding: 40px;
+        font-family: "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+    `;
+    document.body.appendChild(tempContainer);
     
     for (let i = 0; i < filtered.length; i++) {
+        updatePDFProgress(((i + 1) / filtered.length * 100).toFixed(0), `正在生成第 ${i + 1}/${filtered.length} 页...`);
+        
         const entry = filtered[i];
-        const progress = ((i + 1) / filtered.length * 100).toFixed(0);
-        
-        updatePDFProgress(progress, `正在生成第 ${i + 1}/${filtered.length} 页...`);
-        
-        if (i > 0) {
-            doc.addPage();
-        }
-        
         const date = new Date(entry.createdAt);
-        doc.setFontSize(10);
-        doc.setTextColor(150);
-        doc.text(formatDateCN(date) + ' ' + getWeekday(date), 20, 20);
+        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
         
-        let yPos = 35;
+        // 构建 HTML 内容
+        let html = `
+            <div style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                ${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}
+            </div>
+        `;
+        
         if (includeTitle && entry.title) {
-            doc.setFontSize(16);
-            doc.setTextColor(50);
-            doc.text(entry.title, 20, yPos);
-            yPos += 12;
+            html += `<h1 style="color: #1a237e; font-size: 28px; margin-bottom: 20px; font-weight: 400;">${escapeHtml(entry.title)}</h1>`;
         }
         
-        doc.setFontSize(11);
-        doc.setTextColor(80);
-        const contentLines = doc.splitTextToSize(entry.content, 170);
-        doc.text(contentLines, 20, yPos);
-        yPos += contentLines.length * 6 + 10;
+        html += `<div style="color: #37474f; font-size: 16px; line-height: 1.8; white-space: pre-wrap; margin-bottom: 20px;">${escapeHtml(entry.content)}</div>`;
         
+        // 添加图片
         if (includeImages && entry.images && entry.images.length) {
-            for (let j = 0; j < Math.min(entry.images.length, 3); j++) {
-                if (yPos > 250) {
-                    doc.addPage();
-                    yPos = 30;
-                }
-                
-                try {
-                    const imgData = await loadImage(entry.images[j]);
-                    doc.addImage(imgData, 'JPEG', 20 + j * 65, yPos, 60, 60);
-                } catch (e) {
-                    console.error('图片加载失败:', e);
-                }
+            html += '<div style="display: flex; gap: 10px; flex-wrap: wrap;">';
+            for (const img of entry.images.slice(0, 6)) {
+                html += `<img src="${img}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 8px;">`;
             }
+            html += '</div>';
         }
+        
+        tempContainer.innerHTML = html;
+        
+        // 等待图片加载
+        await waitForImages(tempContainer);
+        
+        // 使用 html2canvas 渲染
+        const canvas = await html2canvas(tempContainer, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+        });
+        
+        // 计算缩放以适应页面
+        const imgData = canvas.toDataURL('image/png');
+        const imgHeight = (canvas.height * contentWidth) / canvas.width;
+        
+        // 如果内容超出页面，需要分页处理
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfImgWidth = contentWidth;
+        const pdfImgHeight = (imgProps.height * pdfImgWidth) / imgProps.width;
+        
+        // 添加新页（除了第一页）
+        if (i > 0) {
+            pdf.addPage();
+        }
+        
+        // 居中绘制
+        const x = margin;
+        const y = margin;
+        
+        pdf.addImage(imgData, 'PNG', x, y, pdfImgWidth, Math.min(pdfImgHeight, pageHeight - margin * 2));
     }
+    
+    // 清理
+    document.body.removeChild(tempContainer);
+    
+    // 保存
+    const fileName = `日记_${formatDateForInput(startDate)}_至_${formatDateForInput(endDate)}.pdf`;
+    pdf.save(fileName);
+    
+    closeModal('pdfProgressModal');
+    showToast('✅ PDF 导出成功');
+}
+
+// 等待图片加载完成
+function waitForImages(container) {
+    const images = container.querySelectorAll('img');
+    const promises = Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = resolve; // 错误也继续
+        });
+    });
+    return Promise.all(promises);
+}
     
     const fileName = `日记_${formatDateForInput(startDate)}_至_${formatDateForInput(endDate)}.pdf`;
     doc.save(fileName);
