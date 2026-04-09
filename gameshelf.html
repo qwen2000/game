@@ -33,6 +33,31 @@
             margin-bottom: 10px;
         }
 
+        /* 管理按钮组 */
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 2px solid #0f3460;
+            background: transparent;
+            color: #a0a0a0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .header-btn:hover, .header-btn.active {
+            border-color: #00d4aa;
+            color: #00d4aa;
+        }
+
         /* 添加按钮 */
         .add-btn {
             position: fixed;
@@ -55,7 +80,7 @@
             transform: scale(1.1) rotate(90deg);
         }
 
-        /* 弹窗表单 */
+        /* 弹窗 */
         .modal {
             display: none;
             position: fixed;
@@ -63,7 +88,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             justify-content: center;
             align-items: center;
             z-index: 200;
@@ -79,7 +104,7 @@
             padding: 30px;
             border-radius: 20px;
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -121,8 +146,99 @@
         }
 
         .form-group textarea {
-            min-height: 80px;
+            min-height: 100px;
             resize: vertical;
+        }
+
+        /* 类别管理 */
+        .category-manage {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .category-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: #1a1a2e;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .category-tag.active {
+            background: #00d4aa;
+            color: #0f3460;
+        }
+
+        .category-tag .remove-cat {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .category-tag .remove-cat:hover {
+            opacity: 1;
+        }
+
+        .add-category-btn {
+            padding: 5px 12px;
+            background: transparent;
+            border: 2px dashed #00d4aa;
+            color: #00d4aa;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .add-category-input {
+            display: none;
+            gap: 5px;
+        }
+
+        .add-category-input.active {
+            display: flex;
+        }
+
+        .add-category-input input {
+            width: 100px !important;
+            padding: 5px 10px !important;
+        }
+
+        .add-category-input button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* 标签选择 */
+        .tag-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .tag-option {
+            padding: 6px 14px;
+            background: #1a1a2e;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .tag-option:hover {
+            border-color: #00d4aa;
+        }
+
+        .tag-option.selected {
+            background: #00d4aa;
+            color: #0f3460;
         }
 
         .form-buttons {
@@ -151,6 +267,11 @@
             color: #a0a0a0;
         }
 
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
         }
@@ -163,7 +284,7 @@
 
         .shelf-row {
             background: linear-gradient(180deg, #8b4513 0%, #654321 50%, #4a3018 100%);
-            padding: 20px 30px 40px;
+            padding: 25px 30px 50px;
             margin-bottom: 30px;
             border-radius: 10px;
             box-shadow: 
@@ -178,7 +299,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 20px;
+            height: 25px;
             background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
         }
 
@@ -188,16 +309,21 @@
             gap: 25px;
             justify-content: flex-start;
             align-items: flex-end;
-            min-height: 200px;
+            min-height: 220px;
+        }
+
+        .games-grid.dragging .game-book {
+            cursor: grab;
         }
 
         /* 游戏书本 */
         .game-book {
-            width: 140px;
+            width: 150px;
             cursor: pointer;
             transition: all 0.3s;
             transform-origin: bottom center;
             position: relative;
+            user-select: none;
         }
 
         .game-book:hover {
@@ -205,10 +331,20 @@
             z-index: 10;
         }
 
+        .game-book.dragging {
+            opacity: 0.5;
+            transform: scale(1.1);
+            z-index: 100;
+        }
+
+        .game-book.drag-over {
+            transform: translateX(20px);
+        }
+
         .book-spine {
             width: 100%;
-            height: 180px;
-            border-radius: 3px 8px 8px 3px;
+            height: 200px;
+            border-radius: 3px 10px 10px 3px;
             position: relative;
             box-shadow: 
                 -5px 5px 15px rgba(0,0,0,0.4),
@@ -218,14 +354,13 @@
             overflow: hidden;
         }
 
-        /* 书脊效果 */
         .book-spine::before {
             content: '';
             position: absolute;
             left: 0;
             top: 0;
             bottom: 0;
-            width: 8px;
+            width: 10px;
             background: linear-gradient(90deg, 
                 rgba(255,255,255,0.3) 0%,
                 rgba(255,255,255,0.1) 50%,
@@ -234,14 +369,12 @@
             z-index: 2;
         }
 
-        /* 封面图片 */
         .book-cover-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        /* 无封面时的备用 */
         .book-no-cover {
             width: 100%;
             height: 100%;
@@ -250,8 +383,8 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 10px;
-            font-size: 0.85rem;
+            padding: 15px;
+            font-size: 0.9rem;
         }
 
         .book-no-cover span {
@@ -259,14 +392,57 @@
             text-orientation: mixed;
         }
 
-        /* 书本底部信息 */
+        .lang-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            z-index: 3;
+        }
+
+        .category-tag-display {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.75);
+            color: #00d4aa;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            z-index: 3;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4aa, #00a8e8);
+            transition: width 0.3s;
+        }
+
         .book-info {
-            margin-top: 10px;
+            margin-top: 12px;
             text-align: center;
         }
 
         .book-title {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -274,73 +450,33 @@
         }
 
         .book-platform {
-            font-size: 0.75rem;
-            color: #00d4aa;
-            margin-top: 3px;
-        }
-
-        /* 详情弹窗 */
-        .detail-modal .form-container {
-            max-width: 400px;
-        }
-
-        .detail-cover {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .detail-item {
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #1a1a2e;
-        }
-
-        .detail-item:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
             font-size: 0.8rem;
-            color: #a0a0a0;
-            margin-bottom: 4px;
-        }
-
-        .detail-value {
-            color: #fff;
-            word-break: break-all;
-        }
-
-        .detail-value a {
             color: #00d4aa;
-            text-decoration: none;
+            margin-top: 4px;
         }
 
-        .detail-value a:hover {
-            text-decoration: underline;
+        /* 拖拽提示 */
+        .drag-hint {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #00d4aa;
+            color: #0f3460;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 150;
         }
 
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-            margin-top: 15px;
+        .drag-hint.show {
+            opacity: 1;
         }
 
-        /* 空状态 */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #a0a0a0;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        /* 筛选标签 */
+        /* 筛选 */
         .filters {
             max-width: 1400px;
             margin: 0 auto 20px;
@@ -359,39 +495,141 @@
             transition: all 0.3s;
         }
 
-        .filter-btn.active,
-        .filter-btn:hover {
+        .filter-btn.active, .filter-btn:hover {
             border-color: #00d4aa;
             color: #00d4aa;
         }
 
-        /* 语言标签 */
-        .lang-tag {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0,0,0,0.7);
+        /* 详情弹窗 */
+        .detail-cover {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+
+        .detail-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
             color: #fff;
-            font-size: 0.7rem;
-            padding: 2px 8px;
+            word-break: break-all;
+        }
+
+        .detail-value a {
+            color: #00d4aa;
+            text-decoration: none;
+        }
+
+        .detail-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* 笔记编辑区 */
+        .note-editor {
+            background: #1a1a2e;
             border-radius: 10px;
-            z-index: 3;
+            padding: 15px;
+            margin-top: 10px;
         }
 
-        /* 进度条 */
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: rgba(0,0,0,0.3);
+        .note-display {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: #d0d0d0;
+            min-height: 60px;
         }
 
-        .progress-fill {
-            height: 100%;
+        .note-edit-area {
+            display: none;
+            width: 100%;
+            min-height: 100px;
+            background: transparent;
+            border: 2px solid #00d4aa;
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        .note-edit-area.active {
+            display: block;
+        }
+
+        .note-display.hidden {
+            display: none;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .note-actions button {
+            padding: 6px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn-save-note {
             background: #00d4aa;
-            transition: width 0.3s;
+            color: #0f3460;
+        }
+
+        .btn-cancel-note {
+            background: #1a1a2e;
+            color: #a0a0a0;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #a0a0a0;
+            width: 100%;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0f3460;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00d4aa;
         }
     </style>
 </head>
@@ -399,16 +637,34 @@
     <header>
         <h1>🎮 我的游戏书架</h1>
         <p>记录每一段游戏旅程</p>
+        <div class="header-actions">
+            <button class="header-btn" id="dragModeBtn" onclick="toggleDragMode()">
+                🔀 排序模式
+            </button>
+            <button class="header-btn" onclick="manageCategories()">
+                🏷️ 管理类别
+            </button>
+            <button class="header-btn" onclick="exportData()">
+                💾 导出备份
+            </button>
+            <button class="header-btn" onclick="document.getElementById('importFile').click()">
+                📥 导入恢复
+            </button>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+        </div>
     </header>
 
     <!-- 筛选 -->
     <div class="filters" id="filters">
         <button class="filter-btn active" data-filter="all">全部</button>
         <button class="filter-btn" data-filter="PC">PC</button>
-        <button class="filter-btn" data-filter="PS5">PS5</button>
+        <button class="filter-btn" data-filter="PSP">PSP</button>
+        <button class="filter-btn" data-filter="PSV">PSV</button>
+        <button class="filter-btn" data-filter="NDS">NDS</button>
+        <button class="filter-btn" data-filter="3DS">3DS</button>
         <button class="filter-btn" data-filter="Switch">Switch</button>
-        <button class="filter-btn" data-filter="Xbox">Xbox</button>
-        <button class="filter-btn" data-filter="Mobile">手机</button>
+        <button class="filter-btn" data-filter="iOS">iOS</button>
+        <button class="filter-btn" data-filter="Android">Android</button>
     </div>
 
     <!-- 书架 -->
@@ -423,62 +679,84 @@
         </div>
     </div>
 
-    <!-- 添加按钮 -->
-    <button class="add-btn" onclick="openModal()">+</button>
+    <!-- 拖拽提示 -->
+    <div class="drag-hint" id="dragHint">拖拽书本调整顺序</div>
 
-    <!-- 添加表单弹窗 -->
-    <div class="modal" id="addModal">
+    <!-- 添加/编辑按钮 -->
+    <button class="add-btn" onclick="openAddModal()">+</button>
+
+    <!-- 添加/编辑弹窗 -->
+    <div class="modal" id="gameModal">
         <div class="form-container">
-            <h2>📖 添加游戏</h2>
+            <h2 id="modalTitle">📖 添加游戏</h2>
             <form id="gameForm">
+                <input type="hidden" id="editId">
+                
                 <div class="form-group">
                     <label>原名称 *</label>
                     <input type="text" id="originalName" placeholder="The Legend of Zelda" required>
                 </div>
+                
                 <div class="form-group">
                     <label>中文名称</label>
                     <input type="text" id="chineseName" placeholder="塞尔达传说">
                 </div>
+                
                 <div class="form-group">
                     <label>平台 *</label>
                     <select id="platform" required>
                         <option value="">选择平台</option>
                         <option value="PC">PC</option>
-                        <option value="PS5">PS5</option>
-                        <option value="PS4">PS4</option>
+                        <option value="PSP">PSP</option>
+                        <option value="PSV">PSV</option>
+                        <option value="NDS">NDS</option>
+                        <option value="3DS">3DS</option>
                         <option value="Switch">Switch</option>
-                        <option value="Xbox">Xbox</option>
-                        <option value="Mobile">手机</option>
-                        <option value="Other">其他</option>
+                        <option value="iOS">iOS</option>
+                        <option value="Android">Android</option>
                     </select>
                 </div>
+                
                 <div class="form-group">
                     <label>语言</label>
                     <select id="language">
                         <option value="中文">中文</option>
-                        <option value="英文">英文</option>
                         <option value="日文">日文</option>
+                        <option value="英文">英文</option>
                         <option value="其他">其他</option>
                     </select>
                 </div>
+                
+                <div class="form-group">
+                    <label>游戏类别 *</label>
+                    <div class="tag-selector" id="categorySelector">
+                        <!-- 动态生成 -->
+                    </div>
+                    <input type="hidden" id="selectedCategory" required>
+                </div>
+                
                 <div class="form-group">
                     <label>封面链接</label>
                     <input type="url" id="coverUrl" placeholder="https://...">
                 </div>
+                
                 <div class="form-group">
                     <label>攻略链接</label>
                     <input type="url" id="guideUrl" placeholder="https://...">
                 </div>
+                
                 <div class="form-group">
                     <label>进度 (%)</label>
                     <input type="number" id="progress" min="0" max="100" value="0">
                 </div>
+                
                 <div class="form-group">
-                    <label>备注</label>
-                    <textarea id="note" placeholder="游戏心得、进度记录..."></textarea>
+                    <label>笔记</label>
+                    <textarea id="note" placeholder="游戏心得、进度记录、攻略要点..."></textarea>
                 </div>
+                
                 <div class="form-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('gameModal')">取消</button>
                     <button type="submit" class="btn btn-primary">保存</button>
                 </div>
             </form>
@@ -486,24 +764,53 @@
     </div>
 
     <!-- 详情弹窗 -->
-    <div class="modal detail-modal" id="detailModal">
+    <div class="modal" id="detailModal">
         <div class="form-container" id="detailContent">
             <!-- 动态填充 -->
         </div>
     </div>
 
-    <script>
-        // 数据存储
-        let games = JSON.parse(localStorage.getItem('myGames')) || [];
-        let currentFilter = 'all';
+    <!-- 类别管理弹窗 -->
+    <div class="modal" id="categoryModal">
+        <div class="form-container" style="max-width: 400px;">
+            <h2>🏷️ 管理游戏类别</h2>
+            <div class="form-group">
+                <label>当前类别（点击 × 删除）</label>
+                <div class="category-manage" id="categoryManageList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label>添加新类别</label>
+                <div class="add-category-input" id="addCatInput">
+                    <input type="text" id="newCategoryName" placeholder="类别名称" maxlength="10">
+                    <button class="btn-save-note" onclick="confirmAddCategory()">✓</button>
+                    <button class="btn-cancel-note" onclick="cancelAddCategory()">✕</button>
+                </div>
+                <button class="add-category-btn" id="showAddCatBtn" onclick="showAddCategory()">+ 添加类别</button>
+            </div>
+            <div class="form-buttons" style="margin-top: 25px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">关闭</button>
+            </div>
+        </div>
+    </div>
 
-        // 初始化
+    <script>
+        // ============ 数据存储 ============
+        let games = JSON.parse(localStorage.getItem('myGames')) || [];
+        let categories = JSON.parse(localStorage.getItem('myCategories')) || ['乙女', '推理', '经营'];
+        let currentFilter = 'all';
+        let dragMode = false;
+        let draggedItem = null;
+
+        // ============ 初始化 ============
         document.addEventListener('DOMContentLoaded', () => {
             renderGames();
-            initFilters();
+            renderFilters();
+            initForm();
         });
 
-        // 渲染游戏列表
+        // ============ 渲染游戏 ============
         function renderGames() {
             const grid = document.getElementById('gamesGrid');
             const filtered = currentFilter === 'all' 
@@ -520,17 +827,27 @@
                 return;
             }
 
-            grid.innerHTML = filtered.map(game => `
-                <div class="game-book" onclick="showDetail('${game.id}')">
+            grid.innerHTML = filtered.map((game, index) => `
+                <div class="game-book" 
+                     data-id="${game.id}" 
+                     data-index="${games.indexOf(game)}"
+                     onclick="${dragMode ? '' : `showDetail('${game.id}')`}"
+                     draggable="${dragMode}"
+                     ondragstart="handleDragStart(event, '${game.id}')"
+                     ondragend="handleDragEnd(event)"
+                     ondragover="handleDragOver(event)"
+                     ondrop="handleDrop(event, '${game.id}')">
                     <div class="book-spine">
                         ${game.coverUrl ? `
-                            <img src="${game.coverUrl}" class="book-cover-img" alt="${game.chineseName || game.originalName}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'book-no-cover\\'><span>${game.chineseName || game.originalName}</span></div>'">
+                            <img src="${game.coverUrl}" class="book-cover-img" alt="${game.chineseName || game.originalName}" 
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'book-no-cover\\'><span>${(game.chineseName || game.originalName).slice(0,8)}</span></div>'">
                         ` : `
                             <div class="book-no-cover">
-                                <span>${game.chineseName || game.originalName}</span>
+                                <span>${(game.chineseName || game.originalName).slice(0, 8)}</span>
                             </div>
                         `}
                         <span class="lang-tag">${game.language}</span>
+                        ${game.category ? `<span class="category-tag-display">${game.category}</span>` : ''}
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${game.progress}%"></div>
                         </div>
@@ -543,11 +860,11 @@
             `).join('');
         }
 
-        // 筛选功能
-        function initFilters() {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
+        // ============ 筛选功能 ============
+        function renderFilters() {
+            document.querySelectorAll('#filters .filter-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('#filters .filter-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentFilter = btn.dataset.filter;
                     renderGames();
@@ -555,56 +872,164 @@
             });
         }
 
-        // 打开添加弹窗
-        function openModal() {
-            document.getElementById('addModal').classList.add('active');
-            document.getElementById('gameForm').reset();
+        // ============ 拖拽排序 ============
+        function toggleDragMode() {
+            dragMode = !dragMode;
+            const btn = document.getElementById('dragModeBtn');
+            const hint = document.getElementById('dragHint');
+            const grid = document.getElementById('gamesGrid');
+            
+            if (dragMode) {
+                btn.classList.add('active');
+                btn.textContent = '✓ 完成排序';
+                hint.classList.add('show');
+                grid.classList.add('dragging');
+                // 退出详情模式
+                closeModal('detailModal');
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '🔀 排序模式';
+                hint.classList.remove('show');
+                grid.classList.remove('dragging');
+            }
+            renderGames();
         }
 
-        // 关闭弹窗
-        function closeModal() {
-            document.getElementById('addModal').classList.remove('active');
-            document.getElementById('detailModal').classList.remove('active');
+        function handleDragStart(e, id) {
+            if (!dragMode) return;
+            draggedItem = games.find(g => g.id === id);
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
         }
 
-        // 点击弹窗外部关闭
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
-            });
-        });
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.game-book').forEach(b => b.classList.remove('drag-over'));
+        }
 
-        // 提交表单
-        document.getElementById('gameForm').addEventListener('submit', (e) => {
+        function handleDragOver(e) {
+            if (!dragMode) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e, targetId) {
+            if (!dragMode || !draggedItem) return;
             e.preventDefault();
             
-            const game = {
-                id: Date.now().toString(),
+            const targetItem = games.find(g => g.id === targetId);
+            if (draggedItem === targetItem) return;
+            
+            // 重新排序
+            const fromIndex = games.indexOf(draggedItem);
+            const toIndex = games.indexOf(targetItem);
+            
+            games.splice(fromIndex, 1);
+            games.splice(toIndex, 0, draggedItem);
+            
+            saveGames();
+            renderGames();
+        }
+
+        // ============ 表单功能 ============
+        function initForm() {
+            renderCategorySelector();
+            
+            document.getElementById('gameForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveGame();
+            });
+        }
+
+        function renderCategorySelector(selected = '') {
+            const container = document.getElementById('categorySelector');
+            container.innerHTML = categories.map(cat => `
+                <span class="tag-option ${cat === selected ? 'selected' : ''}" 
+                      onclick="selectCategory('${cat}')">${cat}</span>
+            `).join('');
+        }
+
+        function selectCategory(cat) {
+            document.getElementById('selectedCategory').value = cat;
+            document.querySelectorAll('#categorySelector .tag-option').forEach(el => {
+                el.classList.toggle('selected', el.textContent === cat);
+            });
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '📖 添加游戏';
+            document.getElementById('gameForm').reset();
+            document.getElementById('editId').value = '';
+            document.getElementById('selectedCategory').value = '';
+            renderCategorySelector();
+            document.getElementById('gameModal').classList.add('active');
+        }
+
+        function openEditModal(id) {
+            const game = games.find(g => g.id === id);
+            if (!game) return;
+            
+            document.getElementById('modalTitle').textContent = '✏️ 编辑游戏';
+            document.getElementById('editId').value = game.id;
+            document.getElementById('originalName').value = game.originalName;
+            document.getElementById('chineseName').value = game.chineseName || '';
+            document.getElementById('platform').value = game.platform;
+            document.getElementById('language').value = game.language;
+            document.getElementById('coverUrl').value = game.coverUrl || '';
+            document.getElementById('guideUrl').value = game.guideUrl || '';
+            document.getElementById('progress').value = game.progress;
+            document.getElementById('note').value = game.note || '';
+            
+            document.getElementById('selectedCategory').value = game.category || '';
+            renderCategorySelector(game.category);
+            
+            closeModal('detailModal');
+            document.getElementById('gameModal').classList.add('active');
+        }
+
+        function saveGame() {
+            const id = document.getElementById('editId').value;
+            const gameData = {
                 originalName: document.getElementById('originalName').value,
                 chineseName: document.getElementById('chineseName').value,
                 platform: document.getElementById('platform').value,
                 language: document.getElementById('language').value,
+                category: document.getElementById('selectedCategory').value,
                 coverUrl: document.getElementById('coverUrl').value,
                 guideUrl: document.getElementById('guideUrl').value,
-                progress: document.getElementById('progress').value || 0,
-                note: document.getElementById('note').value,
-                addedAt: new Date().toLocaleString()
+                progress: parseInt(document.getElementById('progress').value) || 0,
+                note: document.getElementById('note').value
             };
-
-            games.unshift(game);
-            localStorage.setItem('myGames', JSON.stringify(games));
+            
+            if (id) {
+                // 编辑
+                const index = games.findIndex(g => g.id === id);
+                games[index] = { ...games[index], ...gameData };
+            } else {
+                // 新增
+                gameData.id = Date.now().toString();
+                gameData.addedAt = new Date().toLocaleString();
+                games.unshift(gameData);
+            }
+            
+            saveGames();
             renderGames();
-            closeModal();
-        });
+            closeModal('gameModal');
+        }
 
-        // 显示详情
+        // ============ 详情与笔记 ============
         function showDetail(id) {
+            if (dragMode) return;
             const game = games.find(g => g.id === id);
             if (!game) return;
 
             const content = document.getElementById('detailContent');
             content.innerHTML = `
-                <h2>🎮 游戏详情</h2>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h2 style="color:#00d4aa;">🎮 游戏详情</h2>
+                    <button onclick="openEditModal('${game.id}')" style="background:#00d4aa; color:#0f3460; border:none; padding:8px 16px; border-radius:8px; cursor:pointer;">✏️ 编辑</button>
+                </div>
+                
                 ${game.coverUrl ? `<img src="${game.coverUrl}" class="detail-cover" onerror="this.style.display='none'">` : ''}
                 
                 <div class="detail-item">
@@ -616,12 +1041,16 @@
                 <div class="detail-item">
                     <div class="detail-label">中文名称</div>
                     <div class="detail-value">${game.chineseName}</div>
-                </div>
-                ` : ''}
+                </div>` : ''}
                 
                 <div class="detail-item">
                     <div class="detail-label">平台</div>
                     <div class="detail-value">${game.platform}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">类别</div>
+                    <div class="detail-value">${game.category || '未分类'}</div>
                 </div>
                 
                 <div class="detail-item">
@@ -632,10 +1061,10 @@
                 <div class="detail-item">
                     <div class="detail-label">进度</div>
                     <div class="detail-value">
-                        <div style="background: #1a1a2e; height: 8px; border-radius: 4px; margin-top: 5px;">
-                            <div style="background: #00d4aa; height: 100%; width: ${game.progress}%; border-radius: 4px;"></div>
+                        <div style="background:#1a1a2e; height:10px; border-radius:5px; margin:8px 0;">
+                            <div style="background:linear-gradient(90deg,#00d4aa,#00a8e8); height:100%; width:${game.progress}%; border-radius:5px;"></div>
                         </div>
-                        <span style="font-size: 0.85rem; color: #a0a0a0;">${game.progress}%</span>
+                        <span style="color:#00d4aa; font-size:1.1rem;">${game.progress}%</span>
                     </div>
                 </div>
                 
@@ -643,42 +1072,192 @@
                 <div class="detail-item">
                     <div class="detail-label">攻略链接</div>
                     <div class="detail-value"><a href="${game.guideUrl}" target="_blank">${game.guideUrl}</a></div>
-                </div>
-                ` : ''}
+                </div>` : ''}
                 
-                ${game.note ? `
+                <!-- 笔记区域 -->
                 <div class="detail-item">
-                    <div class="detail-label">备注</div>
-                    <div class="detail-value" style="white-space: pre-wrap;">${game.note}</div>
+                    <div class="detail-label" style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>📝 笔记</span>
+                        <button onclick="startEditNote('${game.id}')" id="editNoteBtn" style="background:transparent; border:1px solid #00d4aa; color:#00d4aa; padding:4px 12px; border-radius:6px; cursor:pointer; font-size:0.8rem;">编辑</button>
+                    </div>
+                    <div class="note-editor">
+                        <div class="note-display" id="noteDisplay">${game.note || '暂无笔记...'}</div>
+                        <textarea class="note-edit-area" id="noteEditArea">${game.note || ''}</textarea>
+                        <div class="note-actions" id="noteActions" style="display:none;">
+                            <button class="btn-save-note" onclick="saveNote('${game.id}')">保存</button>
+                            <button class="btn-cancel-note" onclick="cancelEditNote()">取消</button>
+                        </div>
+                    </div>
                 </div>
-                ` : ''}
                 
                 <div class="detail-item">
                     <div class="detail-label">添加时间</div>
-                    <div class="detail-value" style="color: #a0a0a0; font-size: 0.85rem;">${game.addedAt}</div>
+                    <div class="detail-value" style="color:#a0a0a0; font-size:0.85rem;">${game.addedAt}</div>
                 </div>
                 
-                <div class="form-buttons">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">关闭</button>
-                    <button type="button" class="btn delete-btn" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
+                <div class="form-buttons" style="margin-top:20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('detailModal')">关闭</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
                 </div>
             `;
             
             document.getElementById('detailModal').classList.add('active');
         }
 
-        // 删除游戏
+        // 笔记编辑
+        function startEditNote(id) {
+            document.getElementById('noteDisplay').classList.add('hidden');
+            document.getElementById('noteEditArea').classList.add('active');
+            document.getElementById('noteActions').style.display = 'flex';
+            document.getElementById('editNoteBtn').style.display = 'none';
+        }
+
+        function saveNote(id) {
+            const newNote = document.getElementById('noteEditArea').value;
+            const game = games.find(g => g.id === id);
+            game.note = newNote;
+            saveGames();
+            renderGames();
+            cancelEditNote();
+            document.getElementById('noteDisplay').textContent = newNote || '暂无笔记...';
+        }
+
+        function cancelEditNote() {
+            document.getElementById('noteDisplay').classList.remove('hidden');
+            document.getElementById('noteEditArea').classList.remove('active');
+            document.getElementById('noteActions').style.display = 'none';
+            document.getElementById('editNoteBtn').style.display = 'block';
+        }
+
+        // ============ 类别管理 ============
+        function manageCategories() {
+            renderCategoryManage();
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function renderCategoryManage() {
+            const container = document.getElementById('categoryManageList');
+            container.innerHTML = categories.map(cat => `
+                <span class="category-tag">
+                    ${cat}
+                    <span class="remove-cat" onclick="removeCategory('${cat}')">×</span>
+                </span>
+            `).join('');
+        }
+
+        function showAddCategory() {
+            document.getElementById('showAddCatBtn').style.display = 'none';
+            document.getElementById('addCatInput').classList.add('active');
+            document.getElementById('newCategoryName').focus();
+        }
+
+        function cancelAddCategory() {
+            document.getElementById('showAddCatBtn').style.display = 'block';
+            document.getElementById('addCatInput').classList.remove('active');
+            document.getElementById('newCategoryName').value = '';
+        }
+
+        function confirmAddCategory() {
+            const name = document.getElementById('newCategoryName').value.trim();
+            if (!name) return;
+            if (categories.includes(name)) {
+                alert('该类别已存在');
+                return;
+            }
+            if (categories.length >= 20) {
+                alert('类别数量已达上限');
+                return;
+            }
+            categories.push(name);
+            localStorage.setItem('myCategories', JSON.stringify(categories));
+            renderCategoryManage();
+            cancelAddCategory();
+        }
+
+        function removeCategory(cat) {
+            if (!confirm(`确定删除类别"${cat}"？\n使用该类别的游戏将变为未分类`)) return;
+            categories = categories.filter(c => c !== cat);
+            localStorage.setItem('myCategories', JSON.stringify(categories));
+            // 更新游戏
+            games.forEach(g => {
+                if (g.category === cat) g.category = '';
+            });
+            saveGames();
+            renderCategoryManage();
+            renderGames();
+        }
+
+        // ============ 数据操作 ============
+        function saveGames() {
+            localStorage.setItem('myGames', JSON.stringify(games));
+        }
+
         function deleteGame(id) {
             if (!confirm('确定要删除这个游戏吗？')) return;
             games = games.filter(g => g.id !== id);
-            localStorage.setItem('myGames', JSON.stringify(games));
+            saveGames();
             renderGames();
-            closeModal();
+            closeModal('detailModal');
         }
 
-        // ESC 关闭弹窗
+        function exportData() {
+            const data = {
+                games: games,
+                categories: categories,
+                exportTime: new Date().toLocaleString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `游戏书架备份_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.games) {
+                        games = data.games;
+                        saveGames();
+                    }
+                    if (data.categories) {
+                        categories = data.categories;
+                        localStorage.setItem('myCategories', JSON.stringify(categories));
+                    }
+                    renderGames();
+                    alert('数据恢复成功！');
+                } catch (err) {
+                    alert('文件格式错误');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        // ============ 工具函数 ============
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal(modal.id);
+            });
+        });
+
+        // ESC 关闭
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(m => closeModal(m.id));
+            }
         });
     </script>
 </body>
