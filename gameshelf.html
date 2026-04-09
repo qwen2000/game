@@ -655,23 +655,27 @@
         }
 
         /* 详情弹窗 - 左右布局 */
-        .detail-modal .form-container {
-            max-width: 800px;
-            padding: 0;
-            overflow: hidden;
-        }
+        /* 详情弹窗 - 左右布局（桌面端） */
+.detail-modal .form-container {
+    max-width: 800px;
+    padding: 0;
+    overflow: hidden;
+    max-height: 90vh;
+}
 
-        .detail-layout {
-            display: flex;
-            min-height: 500px;
-        }
+.detail-layout {
+    display: flex;
+    min-height: 500px;
+    max-height: 90vh;
+}
 
-        .detail-left {
-            width: 45%;
-            min-height: 500px;
-            position: relative;
-            background: var(--cream);
-        }
+.detail-left {
+    width: 45%;
+    min-height: 500px;
+    max-height: 90vh;
+    position: relative;
+    background: var(--cream);
+}
 
         .detail-cover {
             width: 100%;
@@ -709,12 +713,12 @@
             letter-spacing: 0.2em;
         }
 
-        .detail-right {
-            width: 55%;
-            padding: 35px;
-            overflow-y: auto;
-            max-height: 600px;
-        }
+.detail-right {
+    width: 55%;
+    padding: 35px;
+    overflow-y: auto;
+    max-height: 90vh;
+}
 
         .detail-header {
             display: flex;
@@ -790,6 +794,92 @@
         .meta-value.category {
             color: var(--warm-brown);
         }
+
+        /* 手机端：上下布局 */
+@media (max-width: 768px) {
+    .detail-modal .form-container {
+        max-width: 100%;
+        max-height: 85vh;
+        margin: 20px;
+        overflow: hidden;
+    }
+
+    .detail-layout {
+        flex-direction: column;
+        min-height: auto;
+        max-height: 85vh;
+    }
+
+    .detail-left {
+        width: 100%;
+        min-height: 200px;
+        max-height: 35vh;
+        flex-shrink: 0;
+    }
+
+    .detail-right {
+        width: 100%;
+        padding: 20px;
+        max-height: 50vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
+    }
+
+    /* 手机端缩小字体和间距 */
+    .detail-titles h2 {
+        font-size: 1.1rem;
+    }
+
+    .detail-meta {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .meta-item {
+        padding: 10px;
+    }
+
+    .meta-value {
+        font-size: 0.85rem;
+    }
+}
+
+        .detail-scroll-content {
+    min-height: 100%;
+}
+
+@media (max-width: 768px) {
+    .detail-scroll-content {
+        padding-bottom: 20px;
+    }
+    
+    .detail-header {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+    }
+    
+    .edit-btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+    
+    .progress-section {
+        margin-bottom: 15px;
+    }
+    
+    .note-section {
+        margin-bottom: 15px;
+    }
+    
+    .detail-footer {
+        padding-top: 15px;
+    }
+    
+    .delete-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+}
 
         .progress-section {
             margin-bottom: 25px;
@@ -1685,6 +1775,7 @@ async function saveGame() {
 
 // ============ 详情页 ============
 function showDetail(id) {
+function showDetail(id) {
     if (dragMode) return;
     const game = games.find(g => g.id === id);
     if (!game) return;
@@ -1702,61 +1793,63 @@ function showDetail(id) {
             `}
         </div>
         <div class="detail-right">
-            <div class="detail-header">
-                <div class="detail-titles">
-                    <h2>${game.chineseName || game.originalName}</h2>
-                    <div class="original-title">${game.originalName}</div>
+            <div class="detail-scroll-content">
+                <div class="detail-header">
+                    <div class="detail-titles">
+                        <h2>${game.chineseName || game.originalName}</h2>
+                        <div class="original-title">${game.originalName}</div>
+                    </div>
+                    <button class="edit-btn" onclick="openEditModal('${game.id}')">✏️</button>
                 </div>
-                <button class="edit-btn" onclick="openEditModal('${game.id}')">✏️ 编辑</button>
-            </div>
-            <div class="detail-meta">
-                <div class="meta-item">
-                    <div class="meta-label">平台</div>
-                    <div class="meta-value platform">${game.platform}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">类别</div>
-                    <div class="meta-value category">${game.category || '未分类'}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">语言</div>
-                    <div class="meta-value">${game.language}</div>
-                </div>
-                <div class="meta-item">
-                    <div class="meta-label">状态</div>
-                    <div class="meta-value">${game.progress === 100 ? '✅ 已完成' : game.progress > 0 ? '🎮 进行中' : '📋 未开始'}</div>
-                </div>
-            </div>
-            <div class="progress-section">
-                <div class="progress-header">
-                    <span class="progress-label">游戏进度</span>
-                    <span class="progress-percent">${game.progress}%</span>
-                </div>
-                <div class="progress-bar-large">
-                    <div class="progress-fill-large" style="width: ${game.progress}%"></div>
-                </div>
-            </div>
-            ${game.guideUrl ? `
-            <div class="guide-link">
-                <a href="${game.guideUrl}" target="_blank">🔗 查看攻略</a>
-            </div>` : ''}
-            <div class="note-section">
-                <div class="note-header">
-                    <span class="note-title">📝 游戏笔记</span>
-                    <button class="note-edit-btn" id="editNoteBtn" onclick="startEditNote('${game.id}')">编辑</button>
-                </div>
-                <div class="note-content">
-                    <div class="note-display" id="noteDisplay">${game.note || '暂无笔记...'}</div>
-                    <textarea class="note-edit-area" id="noteEditArea">${game.note || ''}</textarea>
-                    <div class="note-actions" id="noteActions" style="display:none;">
-                        <button class="btn-save-note" onclick="saveNote('${game.id}')">保存</button>
-                        <button class="btn-cancel-note" onclick="cancelEditNote()">取消</button>
+                <div class="detail-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">平台</div>
+                        <div class="meta-value platform">${game.platform}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">类别</div>
+                        <div class="meta-value category">${game.category || '未分类'}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">语言</div>
+                        <div class="meta-value">${game.language}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">状态</div>
+                        <div class="meta-value">${game.progress === 100 ? '✅ 已完成' : game.progress > 0 ? '🎮 进行中' : '📋 未开始'}</div>
                     </div>
                 </div>
-            </div>
-            <div class="detail-footer">
-                <span class="added-time">添加于 ${game.addedAt}</span>
-                <button class="delete-btn" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span class="progress-label">进度</span>
+                        <span class="progress-percent">${game.progress}%</span>
+                    </div>
+                    <div class="progress-bar-large">
+                        <div class="progress-fill-large" style="width: ${game.progress}%"></div>
+                    </div>
+                </div>
+                ${game.guideUrl ? `
+                <div class="guide-link">
+                    <a href="${game.guideUrl}" target="_blank">🔗 攻略</a>
+                </div>` : ''}
+                <div class="note-section">
+                    <div class="note-header">
+                        <span class="note-title">📝 笔记</span>
+                        <button class="note-edit-btn" id="editNoteBtn" onclick="startEditNote('${game.id}')">编辑</button>
+                    </div>
+                    <div class="note-content">
+                        <div class="note-display" id="noteDisplay">${game.note || '暂无笔记...'}</div>
+                        <textarea class="note-edit-area" id="noteEditArea">${game.note || ''}</textarea>
+                        <div class="note-actions" id="noteActions" style="display:none;">
+                            <button class="btn-save-note" onclick="saveNote('${game.id}')">保存</button>
+                            <button class="btn-cancel-note" onclick="cancelEditNote()">取消</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-footer">
+                    <span class="added-time">${game.addedAt}</span>
+                    <button class="delete-btn" onclick="deleteGame('${game.id}')">🗑️</button>
+                </div>
             </div>
         </div>
     `;
