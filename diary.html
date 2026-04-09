@@ -158,49 +158,6 @@
             background: #ffcdd2;
         }
 
-        .lock-hint {
-            margin-top: 30px;
-            color: var(--text-light);
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .lock-hint:hover {
-            color: var(--deep-blue);
-        }
-
-        /* 设置密码弹窗 */
-        .setup-password {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 350px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .setup-password h3 {
-            color: var(--navy);
-            margin-bottom: 20px;
-            font-weight: 400;
-        }
-
-        .setup-password input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--sky);
-            border-radius: 12px;
-            font-size: 1.2rem;
-            text-align: center;
-            letter-spacing: 0.5em;
-            margin-bottom: 20px;
-        }
-
-        .setup-password input:focus {
-            outline: none;
-            border-color: var(--deep-blue);
-        }
-
         /* 头部 */
         header {
             background: linear-gradient(180deg, var(--soft-blue) 0%, var(--cream) 100%);
@@ -833,7 +790,6 @@
 </head>
 <body>
     <!-- 密码锁屏 -->
-<!-- 密码锁屏 -->
     <div class="lock-screen" id="lockScreen">
         <div class="lock-icon">🔒</div>
         <h2 class="lock-title">我的日记</h2>
@@ -846,7 +802,7 @@
             <div class="password-dot"></div>
         </div>
         
-        <div class="numpad" id="numpad">
+        <div class="numpad">
             <button class="numpad-btn" onclick="enterDigit(1)">1</button>
             <button class="numpad-btn" onclick="enterDigit(2)">2</button>
             <button class="numpad-btn" onclick="enterDigit(3)">3</button>
@@ -860,25 +816,9 @@
             <button class="numpad-btn" onclick="enterDigit(0)">0</button>
             <button class="numpad-btn delete" onclick="deleteDigit()">⌫</button>
         </div>
-        
-        <p class="lock-hint" onclick="showPasswordSetup()">设置/修改密码</p>
-    </div>
-        
-
-    <!-- 设置密码弹窗 -->
-    <div class="modal" id="passwordSetupModal">
-        <div class="setup-password">
-            <h3>🔐 设置密码</h3>
-            <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 15px;">请输入4位数字密码</p>
-            <input type="password" id="newPassword" maxlength="4" placeholder="••••" readonly>
-            <div class="form-buttons">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('passwordSetupModal')">取消</button>
-                <button type="button" class="btn btn-primary" onclick="savePassword()">保存</button>
-            </div>
-        </div>
     </div>
 
-    <!-- 主内容（初始隐藏） -->
+    <!-- 主内容 -->
     <div id="mainContent" style="display: none;">
         <header>
             <h1>日記 <span>Diary</span></h1>
@@ -995,36 +935,6 @@
         </div>
     </div>
 
-    <!-- 详情弹窗 -->
-    <div class="modal detail-modal" id="detailModal">
-        <div class="form-container">
-            <div class="detail-layout" id="detailContent"></div>
-        </div>
-    </div>
-
-    <!-- 类别管理弹窗 -->
-    <div class="modal" id="categoryModal">
-        <div class="form-container" style="max-width: 420px;">
-            <h2>🏷️ 管理游戏类别</h2>
-            <div class="form-group">
-                <label>当前类别（点击 × 删除）</label>
-                <div class="category-manage" id="categoryManageList"></div>
-            </div>
-            <div class="form-group">
-                <label>添加新类别</label>
-                <div class="add-category-input" id="addCatInput">
-                    <input type="text" id="newCategoryName" placeholder="类别名称" maxlength="10">
-                    <button class="btn-save-note" onclick="confirmAddCategory()">✓</button>
-                    <button class="btn-cancel-note" onclick="cancelAddCategory()">✕</button>
-                </div>
-                <button class="add-category-btn" id="showAddCatBtn" onclick="showAddCategory()">+ 添加类别</button>
-            </div>
-            <div class="form-buttons" style="margin-top: 25px;">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('categoryModal')">关闭</button>
-            </div>
-        </div>
-    </div>
-
     <!-- 导出弹窗 -->
     <div class="modal" id="exportModal">
         <div class="form-container" style="max-width: 500px;">
@@ -1099,192 +1009,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
-// ============ 密码功能 ============
-const PASSWORD_KEY = 'diary_password';
+// ============================================
+// 密码设置 - 修改这里更改密码
+const PASSWORD = '6461';
+// ============================================
+
 let currentPassword = '';
-let tempPassword = '';
 
-// 检查是否已设置密码
-function hasPassword() {
-    return !!localStorage.getItem(PASSWORD_KEY);
-}
-
-// 获取密码
-function getPassword() {
-    return localStorage.getItem(PASSWORD_KEY);
-}
-
-// 初始化锁屏
 function initLockScreen() {
-    if (!hasPassword()) {
-        // 首次使用，引导设置密码
-        showPasswordSetup();
-        return;
-    }
-    
-    document.getElementById('lockScreen').classList.remove('hidden');
-    document.getElementById('mainContent').style.display = 'none';
     currentPassword = '';
-    updatePasswordDots();
+    updateDots();
 }
 
-// 输入数字（解锁模式）
 function enterDigit(digit) {
-    if (currentPassword.length < 4) {
-        currentPassword += digit;
-        updatePasswordDots();
-        
-        if (currentPassword.length === 4) {
-            setTimeout(checkPassword, 200);
-        }
+    if (currentPassword.length >= 4) return;
+    currentPassword += digit;
+    updateDots();
+    
+    if (currentPassword.length === 4) {
+        setTimeout(checkPassword, 150);
     }
 }
 
-// 删除数字（解锁模式）
 function deleteDigit() {
     currentPassword = currentPassword.slice(0, -1);
-    updatePasswordDots();
+    updateDots();
 }
 
-// 清空密码（解锁模式）
 function clearPassword() {
     currentPassword = '';
-    updatePasswordDots();
+    updateDots();
 }
 
-// 设置密码模式：输入数字
-function setupEnterDigit(digit) {
-    if (tempPassword.length < 4) {
-        tempPassword += digit;
-        document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
-    }
-}
-
-// 设置密码模式：删除
-function setupDeleteDigit() {
-    tempPassword = tempPassword.slice(0, -1);
-    document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
-}
-
-// 设置密码模式：清空
-function setupClearPassword() {
-    tempPassword = '';
-    document.getElementById('newPassword').value = '';
-}
-
-// 更新密码点显示
-function updatePasswordDots() {
+function updateDots() {
     const dots = document.querySelectorAll('.password-dot');
-    dots.forEach((dot, index) => {
-        dot.classList.toggle('filled', index < currentPassword.length);
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('filled', i < currentPassword.length);
         dot.classList.remove('error');
     });
 }
 
-// 检查密码
 function checkPassword() {
-    const correctPassword = getPassword();
-    
-    if (currentPassword === correctPassword) {
-        // 解锁成功
+    if (currentPassword === PASSWORD) {
         document.getElementById('lockScreen').classList.add('hidden');
         document.getElementById('mainContent').style.display = 'block';
         initDiary();
     } else {
-        // 密码错误
-        const dots = document.querySelectorAll('.password-dot');
-        dots.forEach(dot => dot.classList.add('error'));
-        showToast('❌ 密码错误');
-        
+        document.querySelectorAll('.password-dot').forEach(d => d.classList.add('error'));
         setTimeout(() => {
             currentPassword = '';
-            updatePasswordDots();
-        }, 500);
+            updateDots();
+        }, 400);
     }
-}
-
-// 显示密码设置
-function showPasswordSetup() {
-    tempPassword = '';
-    document.getElementById('newPassword').value = '';
-    
-    // 创建设置模式的数字键盘
-    const numpad = document.getElementById('numpad');
-    numpad.innerHTML = `
-        <button class="numpad-btn" onclick="setupEnterDigit(1)">1</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(2)">2</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(3)">3</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(4)">4</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(5)">5</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(6)">6</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(7)">7</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(8)">8</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(9)">9</button>
-        <button class="numpad-btn" onclick="setupClearPassword()" style="font-size: 0.9rem;">清空</button>
-        <button class="numpad-btn" onclick="setupEnterDigit(0)">0</button>
-        <button class="numpad-btn delete" onclick="setupDeleteDigit()">⌫</button>
-    `;
-    
-    // 修改标题和提示
-    document.querySelector('.lock-title').textContent = '设置密码';
-    document.querySelector('.lock-subtitle').textContent = '请输入4位数字密码';
-    document.querySelector('.lock-hint').style.display = 'none';
-    
-    document.getElementById('passwordSetupModal').classList.add('active');
-}
-
-// 恢复解锁键盘
-function restoreUnlockNumpad() {
-    const numpad = document.getElementById('numpad');
-    numpad.innerHTML = `
-        <button class="numpad-btn" onclick="enterDigit(1)">1</button>
-        <button class="numpad-btn" onclick="enterDigit(2)">2</button>
-        <button class="numpad-btn" onclick="enterDigit(3)">3</button>
-        <button class="numpad-btn" onclick="enterDigit(4)">4</button>
-        <button class="numpad-btn" onclick="enterDigit(5)">5</button>
-        <button class="numpad-btn" onclick="enterDigit(6)">6</button>
-        <button class="numpad-btn" onclick="enterDigit(7)">7</button>
-        <button class="numpad-btn" onclick="enterDigit(8)">8</button>
-        <button class="numpad-btn" onclick="enterDigit(9)">9</button>
-        <button class="numpad-btn" onclick="clearPassword()" style="font-size: 0.9rem;">清空</button>
-        <button class="numpad-btn" onclick="enterDigit(0)">0</button>
-        <button class="numpad-btn delete" onclick="deleteDigit()">⌫</button>
-    `;
-    
-    document.querySelector('.lock-title').textContent = '我的日记';
-    document.querySelector('.lock-subtitle').textContent = '请输入密码解锁';
-    document.querySelector('.lock-hint').style.display = 'block';
-}
-
-// 保存密码
-function savePassword() {
-    if (tempPassword.length !== 4) {
-        alert('请输入4位密码');
-        return;
-    }
-    
-    localStorage.setItem(PASSWORD_KEY, tempPassword);
-    closeModal('passwordSetupModal');
-    showToast('✅ 密码设置成功');
-    
-    // 恢复解锁界面
-    restoreUnlockNumpad();
-    
-    // 自动解锁
-    document.getElementById('lockScreen').classList.add('hidden');
-    document.getElementById('mainContent').style.display = 'block';
-    initDiary();
-}
-
-// 修改密码
-function changePassword() {
-    // 先验证旧密码
-    const oldPass = prompt('请输入当前密码：');
-    if (oldPass !== getPassword()) {
-        alert('密码错误');
-        return;
-    }
-    showPasswordSetup();
 }
 
 // ============ JSONBin.io 配置 ============
@@ -1306,7 +1082,6 @@ function checkGithubConfig() {
     if (!GITHUB_CONFIG.TOKEN || !GITHUB_CONFIG.REPO) {
         const gameToken = localStorage.getItem('github_token');
         const gameRepo = localStorage.getItem('github_repo');
-        
         if (gameToken && gameRepo) {
             GITHUB_CONFIG.TOKEN = gameToken;
             GITHUB_CONFIG.REPO = gameRepo;
@@ -1976,13 +1751,6 @@ function showToast(message) {
 
 function closeModal(id) {
     document.getElementById(id).classList.remove('active');
-    
-    // 退出设置模式
-    if (id === 'passwordSetupModal') {
-        window.enterDigit = originalEnterDigit;
-        window.deleteDigit = originalDeleteDigit;
-        window.clearPassword = originalClearPassword;
-    }
 }
 
 document.querySelectorAll('.modal').forEach(modal => {
@@ -1999,47 +1767,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ============ 启动 ============
-// 页面加载时初始化锁屏
-document.addEventListener('DOMContentLoaded', () => {
-    // 保存原始函数
-    window.originalEnterDigit = enterDigit;
-    window.originalDeleteDigit = deleteDigit;
-    window.originalClearPassword = clearPassword;
-    
-    // 监听设置弹窗
-    const setupModal = document.getElementById('passwordSetupModal');
-    const observer = new MutationObserver(() => {
-        if (setupModal.classList.contains('active')) {
-            // 设置模式
-            window.enterDigit = (d) => {
-                if (tempPassword.length < 4) {
-                    tempPassword += d;
-                    document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
-                }
-            };
-            window.deleteDigit = () => {
-                tempPassword = tempPassword.slice(0, -1);
-                document.getElementById('newPassword').value = '•'.repeat(tempPassword.length);
-            };
-            window.clearPassword = () => {
-                tempPassword = '';
-                document.getElementById('newPassword').value = '';
-            };
-        } else {
-            // 解锁模式
-            window.enterDigit = window.originalEnterDigit;
-            window.deleteDigit = window.originalDeleteDigit;
-            window.clearPassword = window.originalClearPassword;
-        }
-    });
-    observer.observe(setupModal, { attributes: true, attributeFilter: ['class'] });
-    
-    // 初始化锁屏
-// ============ 启动 ============
-document.addEventListener('DOMContentLoaded', () => {
-    initLockScreen();
-});
-});
+document.addEventListener('DOMContentLoaded', initLockScreen);
     </script>
 </body>
 </html>
