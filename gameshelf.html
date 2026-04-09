@@ -12,19 +12,20 @@
         }
 
         :root {
-            --cream: #fefcf8;
-            --soft-pink: #fce4ec;
-            --dusty-pink: #f8bbd9;
-            --sage: #e8f5e9;
-            --soft-green: #c8e6c9;
-            --sky: #e3f2fd;
-            --soft-blue: #bbdefb;
-            --lavender: #f3e5f5;
-            --peach: #ffecb3;
-            --warm-gray: #8d6e63;
+            --cream: #f8faf5;
+            --soft-green: #e8f5e9;
+            --mint: #c8e6c9;
+            --sage: #a5d6a7;
+            --leaf: #81c784;
+            --forest: #66bb6a;
+            --deep-green: #4caf50;
+            --tea: #dcedc8;
+            --matcha: #c5e1a5;
+            --bamboo: #aed581;
+            --warm-brown: #795548;
             --text: #4a4a4a;
             --text-light: #757575;
-            --shadow: rgba(0,0,0,0.06);
+            --shadow: rgba(0,0,0,0.05);
         }
 
         body {
@@ -37,36 +38,34 @@
 
         /* 头部 */
         header {
-            background: linear-gradient(180deg, var(--soft-pink) 0%, var(--cream) 100%);
+            background: linear-gradient(180deg, var(--soft-green) 0%, var(--cream) 100%);
             padding: 40px 20px 30px;
             text-align: center;
             position: relative;
         }
 
         header::before {
-            content: '❀';
+            content: '🌿';
             position: absolute;
             top: 15px;
             left: 20px;
-            color: var(--dusty-pink);
             font-size: 1.5rem;
             opacity: 0.6;
         }
 
         header::after {
-            content: '❀';
+            content: '🍃';
             position: absolute;
             top: 20px;
             right: 25px;
-            color: var(--soft-green);
-            font-size: 1.2rem;
-            opacity: 0.6;
+            font-size: 1.3rem;
+            opacity: 0.5;
         }
 
         header h1 {
             font-size: 2rem;
             font-weight: 400;
-            color: var(--warm-gray);
+            color: var(--warm-brown);
             letter-spacing: 0.15em;
         }
 
@@ -88,13 +87,13 @@
         }
 
         .breadcrumb a {
-            color: var(--dusty-pink);
+            color: var(--forest);
             text-decoration: none;
             transition: color 0.3s;
         }
 
         .breadcrumb a:hover {
-            color: var(--warm-gray);
+            color: var(--deep-green);
         }
 
         /* 操作栏 */
@@ -129,8 +128,36 @@
         }
 
         .header-btn.active {
-            background: var(--soft-pink);
-            color: var(--warm-gray);
+            background: var(--soft-green);
+            color: var(--deep-green);
+        }
+
+        /* 统计信息 */
+        .stats-bar {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            padding: 0 20px;
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .stat-item span {
+            color: var(--forest);
+            font-weight: 500;
+            font-size: 1.1rem;
         }
 
         /* 筛选区 */
@@ -141,13 +168,13 @@
         }
 
         .filter-group {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .filter-label {
             font-size: 0.8rem;
             color: var(--text-light);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -157,7 +184,7 @@
             content: '';
             width: 4px;
             height: 16px;
-            background: var(--dusty-pink);
+            background: var(--leaf);
             border-radius: 2px;
         }
 
@@ -179,14 +206,14 @@
         }
 
         .filter-btn:hover {
-            border-color: var(--dusty-pink);
-            color: var(--dusty-pink);
+            border-color: var(--mint);
+            color: var(--forest);
         }
 
         .filter-btn.active {
-            background: var(--soft-pink);
-            border-color: var(--soft-pink);
-            color: var(--warm-gray);
+            background: var(--soft-green);
+            border-color: var(--soft-green);
+            color: var(--deep-green);
         }
 
         /* 添加按钮 */
@@ -197,12 +224,12 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--soft-pink), var(--dusty-pink));
+            background: linear-gradient(135deg, var(--mint), var(--leaf));
             border: none;
             color: white;
             font-size: 1.8rem;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(248, 187, 217, 0.4);
+            box-shadow: 0 4px 15px rgba(129, 199, 132, 0.4);
             transition: all 0.3s;
             z-index: 100;
         }
@@ -219,7 +246,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(254, 252, 248, 0.95);
+            background: rgba(248, 250, 245, 0.95);
             justify-content: center;
             align-items: center;
             z-index: 200;
@@ -244,7 +271,7 @@
         .form-container h2 {
             font-size: 1.4rem;
             font-weight: 400;
-            color: var(--warm-gray);
+            color: var(--warm-brown);
             margin-bottom: 25px;
             text-align: center;
         }
@@ -277,7 +304,7 @@
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--dusty-pink);
+            border-color: var(--mint);
             background: white;
         }
 
@@ -304,12 +331,12 @@
         }
 
         .tag-option:hover {
-            border-color: var(--soft-green);
+            border-color: var(--mint);
         }
 
         .tag-option.selected {
-            background: var(--sage);
-            color: #2e7d32;
+            background: var(--soft-green);
+            color: var(--deep-green);
         }
 
         .category-manage {
@@ -325,10 +352,10 @@
             align-items: center;
             gap: 6px;
             padding: 6px 14px;
-            background: var(--lavender);
+            background: var(--tea);
             border-radius: 20px;
             font-size: 0.85rem;
-            color: #6a1b9a;
+            color: var(--warm-brown);
         }
 
         .category-tag .remove-cat {
@@ -344,8 +371,8 @@
         .add-category-btn {
             padding: 6px 14px;
             background: transparent;
-            border: 2px dashed var(--soft-blue);
-            color: var(--soft-blue);
+            border: 2px dashed var(--mint);
+            color: var(--forest);
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.85rem;
@@ -353,8 +380,8 @@
         }
 
         .add-category-btn:hover {
-            border-color: var(--dusty-pink);
-            color: var(--dusty-pink);
+            border-color: var(--leaf);
+            color: var(--deep-green);
         }
 
         .add-category-input {
@@ -396,7 +423,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--soft-pink), var(--dusty-pink));
+            background: linear-gradient(135deg, var(--mint), var(--leaf));
             color: white;
         }
 
@@ -411,8 +438,8 @@
         }
 
         .btn-save-note {
-            background: var(--sage);
-            color: #2e7d32;
+            background: var(--soft-green);
+            color: var(--deep-green);
         }
 
         .btn-cancel-note {
@@ -432,7 +459,7 @@
         }
 
         .shelf-row {
-            background: linear-gradient(180deg, #d7ccc8 0%, #a1887f 50%, #8d6e63 100%);
+            background: linear-gradient(180deg, #bcaaa4 0%, #8d6e63 50%, #6d4c41 100%);
             padding: 30px 35px 50px;
             margin-bottom: 40px;
             border-radius: 8px;
@@ -521,7 +548,7 @@
         .book-no-cover {
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--soft-pink), var(--lavender));
+            background: linear-gradient(135deg, var(--soft-green), var(--tea));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -532,7 +559,7 @@
         .book-no-cover span {
             writing-mode: vertical-rl;
             text-orientation: mixed;
-            color: var(--warm-gray);
+            color: var(--warm-brown);
             font-size: 0.95rem;
             letter-spacing: 0.1em;
         }
@@ -556,7 +583,7 @@
             left: 10px;
             right: 10px;
             background: rgba(255,255,255,0.92);
-            color: var(--warm-gray);
+            color: var(--warm-brown);
             font-size: 0.7rem;
             padding: 4px 10px;
             border-radius: 12px;
@@ -579,7 +606,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--soft-green), #81c784);
+            background: linear-gradient(90deg, var(--mint), var(--forest));
             transition: width 0.4s;
         }
 
@@ -609,8 +636,8 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--sage);
-            color: #2e7d32;
+            background: var(--soft-green);
+            color: var(--deep-green);
             padding: 12px 28px;
             border-radius: 25px;
             font-size: 0.9rem;
@@ -625,61 +652,251 @@
             opacity: 1;
         }
 
-        /* 详情弹窗 */
-        .detail-cover {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 16px;
-            margin-bottom: 20px;
+        /* ========== 详情弹窗 - 左右布局 ========== */
+        .detail-modal .form-container {
+            max-width: 800px;
+            padding: 0;
+            overflow: hidden;
         }
 
-        .detail-item {
-            margin-bottom: 16px;
-            padding-bottom: 16px;
+        .detail-layout {
+            display: flex;
+            min-height: 500px;
+        }
+
+        /* 左侧图片区 */
+        .detail-left {
+            width: 45%;
+            min-height: 500px;
+            position: relative;
+            background: var(--cream);
+        }
+
+        .detail-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .detail-no-cover {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--soft-green), var(--tea));
+            color: var(--warm-brown);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .detail-no-cover .big-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .detail-no-cover h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 0.2em;
+        }
+
+        /* 右侧信息区 */
+        .detail-right {
+            width: 55%;
+            padding: 35px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
             border-bottom: 1px solid #f0f0f0;
         }
 
-        .detail-item:last-of-type {
-            border-bottom: none;
+        .detail-titles h2 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--warm-brown);
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
-        .detail-label {
-            font-size: 0.8rem;
+        .detail-titles .original-title {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .edit-btn {
+            padding: 10px 22px;
+            background: var(--soft-green);
+            color: var(--deep-green);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .edit-btn:hover {
+            background: var(--mint);
+            transform: translateY(-2px);
+        }
+
+        .detail-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .meta-item {
+            background: var(--cream);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
             color: var(--text-light);
             margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .meta-value {
+            font-size: 0.95rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .meta-value.platform {
+            color: var(--forest);
+        }
+
+        .meta-value.category {
+            color: var(--warm-brown);
+        }
+
+        /* 进度条 */
+        .progress-section {
+            margin-bottom: 25px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .progress-percent {
+            font-size: 1.3rem;
+            color: var(--forest);
+            font-weight: 500;
+        }
+
+        .progress-bar-large {
+            height: 12px;
+            background: #e8e8e8;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill-large {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mint), var(--forest));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        /* 链接 */
+        .guide-link {
+            margin-bottom: 25px;
+        }
+
+        .guide-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--soft-green);
+            color: var(--deep-green);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .guide-link a:hover {
+            background: var(--mint);
+            transform: translateX(5px);
+        }
+
+        /* 笔记 */
+        .note-section {
+            margin-bottom: 25px;
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .note-title {
+            font-size: 0.9rem;
+            color: var(--text-light);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        .detail-value {
-            color: var(--text);
-            word-break: break-all;
+        .note-edit-btn {
+            padding: 6px 16px;
+            background: transparent;
+            border: 1.5px solid var(--mint);
+            color: var(--forest);
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
         }
 
-        .detail-value a {
-            color: var(--dusty-pink);
-            text-decoration: none;
+        .note-edit-btn:hover {
+            background: var(--soft-green);
         }
 
-        .detail-value a:hover {
-            text-decoration: underline;
-        }
-
-        /* 笔记编辑 */
-        .note-editor {
+        .note-content {
             background: var(--cream);
             border-radius: 12px;
-            padding: 16px;
-            margin-top: 10px;
+            padding: 20px;
+            min-height: 100px;
         }
 
         .note-display {
             white-space: pre-wrap;
-            line-height: 1.7;
+            line-height: 1.8;
             color: var(--text);
-            min-height: 60px;
             font-size: 0.95rem;
         }
 
@@ -688,9 +905,9 @@
             width: 100%;
             min-height: 120px;
             background: white;
-            border: 2px solid var(--soft-pink);
+            border: 2px solid var(--mint);
             border-radius: 10px;
-            padding: 12px;
+            padding: 15px;
             color: var(--text);
             font-family: inherit;
             font-size: 0.95rem;
@@ -708,15 +925,44 @@
         .note-actions {
             display: flex;
             gap: 10px;
-            margin-top: 12px;
+            margin-top: 15px;
         }
 
         .note-actions button {
-            padding: 8px 18px;
-            border-radius: 8px;
+            padding: 10px 24px;
+            border-radius: 10px;
             border: none;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+        }
+
+        /* 底部信息 */
+        .detail-footer {
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .added-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .delete-btn {
+            padding: 10px 24px;
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #ffcdd2;
         }
 
         /* 空状态 */
@@ -730,31 +976,33 @@
         .empty-state h3 {
             font-size: 1.3rem;
             font-weight: 400;
-            color: var(--warm-gray);
+            color: var(--warm-brown);
             margin-bottom: 10px;
         }
 
-        /* 统计信息 */
-        .stats-bar {
-            max-width: 1200px;
-            margin: 0 auto 20px;
-            padding: 0 20px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stat-item span {
-            color: var(--dusty-pink);
-            font-weight: 500;
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .detail-layout {
+                flex-direction: column;
+            }
+            
+            .detail-left,
+            .detail-right {
+                width: 100%;
+            }
+            
+            .detail-left {
+                min-height: 300px;
+                max-height: 400px;
+            }
+            
+            .detail-right {
+                max-height: none;
+            }
+            
+            .detail-meta {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* 滚动条 */
@@ -768,12 +1016,12 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--soft-pink);
+            background: var(--mint);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--dusty-pink);
+            background: var(--leaf);
         }
     </style>
 </head>
@@ -804,14 +1052,13 @@
 
     <!-- 统计 -->
     <div class="stats-bar" id="statsBar">
-        <div class="stat-item">📚 总计: <span id="totalCount">0</span></div>
-        <div class="stat-item">✅ 已完成: <span id="completedCount">0</span></div>
-        <div class="stat-item">🎮 进行中: <span id="playingCount">0</span></div>
+        <div class="stat-item">📚 总计 <span id="totalCount">0</span></div>
+        <div class="stat-item">✅ 已完成 <span id="completedCount">0</span></div>
+        <div class="stat-item">🎮 进行中 <span id="playingCount">0</span></div>
     </div>
 
     <!-- 筛选区 -->
     <div class="filter-section">
-        <!-- 平台筛选 -->
         <div class="filter-group">
             <div class="filter-label">平台</div>
             <div class="filter-tags" id="platformFilters">
@@ -827,12 +1074,10 @@
             </div>
         </div>
         
-        <!-- 类别筛选 -->
         <div class="filter-group">
             <div class="filter-label">类别</div>
             <div class="filter-tags" id="categoryFilters">
                 <button class="filter-btn active" data-filter="all" data-type="category">全部</button>
-                <!-- 动态生成 -->
             </div>
         </div>
     </div>
@@ -929,9 +1174,13 @@
         </div>
     </div>
 
-    <!-- 详情弹窗 -->
-    <div class="modal" id="detailModal">
-        <div class="form-container" id="detailContent"></div>
+    <!-- 详情弹窗 - 左右布局 -->
+    <div class="modal detail-modal" id="detailModal">
+        <div class="form-container">
+            <div class="detail-layout" id="detailContent">
+                <!-- 动态生成 -->
+            </div>
+        </div>
     </div>
 
     <!-- 类别管理弹窗 -->
@@ -981,12 +1230,10 @@
             
             let filtered = games;
             
-            // 平台筛选
             if (currentPlatformFilter !== 'all') {
                 filtered = filtered.filter(g => g.platform === currentPlatformFilter);
             }
             
-            // 类别筛选
             if (currentCategoryFilter !== 'all') {
                 filtered = filtered.filter(g => g.category === currentCategoryFilter);
             }
@@ -1057,7 +1304,6 @@
                 ${buttons}
             `;
             
-            // 绑定事件
             container.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1215,7 +1461,7 @@
             closeModal('gameModal');
         }
 
-        // ============ 详情与笔记 ============
+        // ============ 详情页 - 左右布局 ============
         function showDetail(id) {
             if (dragMode) return;
             const game = games.find(g => g.id === id);
@@ -1223,80 +1469,90 @@
 
             const content = document.getElementById('detailContent');
             content.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <h2 style="color:var(--warm-gray); font-weight:400;">🎮 游戏详情</h2>
-                    <button onclick="openEditModal('${game.id}')" class="btn" style="background:var(--soft-pink); color:white; padding:8px 20px; flex:0; width:auto;">✏️ 编辑</button>
-                </div>
-                
-                ${game.coverUrl ? `<img src="${game.coverUrl}" class="detail-cover" onerror="this.style.display='none'">` : ''}
-                
-                <div class="detail-item">
-                    <div class="detail-label">原名称</div>
-                    <div class="detail-value">${game.originalName}</div>
-                </div>
-                
-                ${game.chineseName ? `
-                <div class="detail-item">
-                    <div class="detail-label">中文名称</div>
-                    <div class="detail-value">${game.chineseName}</div>
-                </div>` : ''}
-                
-                <div class="detail-item">
-                    <div class="detail-label">平台</div>
-                    <div class="detail-value">${game.platform}</div>
-                </div>
-                
-                <div class="detail-item">
-                    <div class="detail-label">类别</div>
-                    <div class="detail-value">${game.category || '未分类'}</div>
-                </div>
-                
-                <div class="detail-item">
-                    <div class="detail-label">语言</div>
-                    <div class="detail-value">${game.language}</div>
-                </div>
-                
-                <div class="detail-item">
-                    <div class="detail-label">进度</div>
-                    <div class="detail-value">
-                        <div style="background:var(--cream); height:10px; border-radius:5px; margin:8px 0;">
-                            <div style="background:linear-gradient(90deg,var(--soft-green),#81c784); height:100%; width:${game.progress}%; border-radius:5px;"></div>
+                <!-- 左侧：封面图片 -->
+                <div class="detail-left">
+                    ${game.coverUrl ? `
+                        <img src="${game.coverUrl}" class="detail-cover" alt="${game.chineseName || game.originalName}" 
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'detail-no-cover\\'><span class=\\'big-icon\\'>🎮</span><h3>${(game.chineseName || game.originalName).slice(0, 10)}</h3></div>'">
+                    ` : `
+                        <div class="detail-no-cover">
+                            <span class="big-icon">🎮</span>
+                            <h3>${(game.chineseName || game.originalName).slice(0, 10)}</h3>
                         </div>
-                        <span style="color:var(--soft-green); font-weight:500;">${game.progress}%</span>
-                    </div>
+                    `}
                 </div>
                 
-                ${game.guideUrl ? `
-                <div class="detail-item">
-                    <div class="detail-label">攻略链接</div>
-                    <div class="detail-value"><a href="${game.guideUrl}" target="_blank">${game.guideUrl}</a></div>
-                </div>` : ''}
-                
-                <div class="detail-item">
-                    <div class="detail-label" style="display:flex; justify-content:space-between; align-items:center;">
-                        <span>📝 笔记</span>
-                        <button onclick="startEditNote('${game.id}')" id="editNoteBtn" style="background:transparent; border:1px solid var(--soft-pink); color:var(--dusty-pink); padding:5px 14px; border-radius:8px; cursor:pointer; font-size:0.8rem;">编辑</button>
+                <!-- 右侧：游戏信息 -->
+                <div class="detail-right">
+                    <div class="detail-header">
+                        <div class="detail-titles">
+                            <h2>${game.chineseName || game.originalName}</h2>
+                            <div class="original-title">${game.originalName}</div>
+                        </div>
+                        <button class="edit-btn" onclick="openEditModal('${game.id}')">✏️ 编辑</button>
                     </div>
-                    <div class="note-editor">
-                        <div class="note-display" id="noteDisplay">${game.note || '暂无笔记...'}</div>
-                        <textarea class="note-edit-area" id="noteEditArea">${game.note || ''}</textarea>
-                        <div class="note-actions" id="noteActions" style="display:none;">
-                            <button class="btn-save-note" onclick="saveNote('${game.id}')">保存</button>
-                            <button class="btn-cancel-note" onclick="cancelEditNote()">取消</button>
+                    
+                    <div class="detail-meta">
+                        <div class="meta-item">
+                            <div class="meta-label">平台</div>
+                            <div class="meta-value platform">${game.platform}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">类别</div>
+                            <div class="meta-value category">${game.category || '未分类'}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">语言</div>
+                            <div class="meta-value">${game.language}</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">状态</div>
+                            <div class="meta-value">${game.progress === 100 ? '✅ 已完成' : game.progress > 0 ? '🎮 进行中' : '📋 未开始'}</div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="detail-item">
-                    <div class="detail-label">添加时间</div>
-                    <div class="detail-value" style="color:var(--text-light); font-size:0.85rem;">${game.addedAt}</div>
-                </div>
-                
-                <div class="form-buttons" style="margin-top:20px;">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('detailModal')">关闭</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
+                    
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">游戏进度</span>
+                            <span class="progress-percent">${game.progress}%</span>
+                        </div>
+                        <div class="progress-bar-large">
+                            <div class="progress-fill-large" style="width: ${game.progress}%"></div>
+                        </div>
+                    </div>
+                    
+                    ${game.guideUrl ? `
+                    <div class="guide-link">
+                        <a href="${game.guideUrl}" target="_blank">
+                            🔗 查看攻略
+                        </a>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="note-section">
+                        <div class="note-header">
+                            <span class="note-title">📝 游戏笔记</span>
+                            <button class="note-edit-btn" id="editNoteBtn" onclick="startEditNote('${game.id}')">编辑</button>
+                        </div>
+                        <div class="note-content">
+                            <div class="note-display" id="noteDisplay">${game.note || '暂无笔记...'}</div>
+                            <textarea class="note-edit-area" id="noteEditArea">${game.note || ''}</textarea>
+                            <div class="note-actions" id="noteActions">
+                                <button class="btn-save-note" onclick="saveNote('${game.id}')">保存</button>
+                                <button class="btn-cancel-note" onclick="cancelEditNote()">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-footer">
+                        <span class="added-time">添加于 ${game.addedAt}</span>
+                        <button class="delete-btn" onclick="deleteGame('${game.id}')">🗑️ 删除</button>
+                    </div>
                 </div>
             `;
+            
+            // 初始化笔记编辑状态
+            document.getElementById('noteActions').style.display = 'none';
             
             document.getElementById('detailModal').classList.add('active');
         }
