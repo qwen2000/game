@@ -1715,6 +1715,7 @@ async function generatePDF() {
     
     closeModal('exportModal');
     document.getElementById('pdfProgressModal').classList.add('active');
+    updatePDFProgress(10, '正在准备...');
     
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -1725,14 +1726,17 @@ async function generatePDF() {
     const margin = 20;
     const contentWidth = pageWidth - margin * 2;
     
-    // 创建临时渲染容器
+    // 创建临时渲染容器（单页长文档）
     const container = document.getElementById('pdfContainer');
     container.innerHTML = '';
     container.style.display = 'block';
+    container.style.height = 'auto';
+    container.style.minHeight = '1000px';
     
     // 生成封面
     const coverDiv = document.createElement('div');
-    coverDiv.className = 'pdf-page pdf-cover';
+    coverDiv.className = 'pdf-cover';
+    coverDiv.style.padding = '150px 0';
     coverDiv.innerHTML = `
         <h1>我的日记</h1>
         <div class="date-range">${formatDateCN(startDate)} - ${formatDateCN(endDate)}</div>
@@ -1740,79 +1744,90 @@ async function generatePDF() {
     `;
     container.appendChild(coverDiv);
     
-    // 等待封面渲染
-    await new Promise(r => setTimeout(r, 100));
+    // 生成所有日记内容（连续排列）
+    const contentDiv = document.createElement('div');
+    contentDiv.style.padding = '40px 60px';
+    contentDiv.style.background = 'white';
     
-    // 渲染封面为图片
-    const coverCanvas = await html2canvas(coverDiv, {
+    for (let i = 0; i < filtered.length; i++) {
+        const entry = filtered[i];
+        const date = new Date(entry.createdAt);
+        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        
+        const entryDiv = document.createElement('div');
+        entryDiv.style.marginBottom = '40px';
+        entryDiv.style.paddingBottom = '30px';
+        entryDiv.style.borderBottom = i < filtered.length - 1 ? '1px solid #eee' : 'none';
+        
+        let html = `
+            <div style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                ${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}
+            </div>
+        `;
+        
+        if (includeTitle && entry.title) {
+            html += `<div style="color: #1a237e; font-size: 22px; margin-bottom: 15px; font-weight: 400;">${escapeHtml(entry.title)}</div>`;
+        }
+        
+        html += `<div style="color: #37474f; font-size: 15px; line-height: 1.9; white-space: pre-wrap; margin-bottom: 20px;">${escapeHtml(entry.content)}</div>`;
+        
+        if (includeImages && entry.images && entry.images.length) {
+            html += '<div style="display: flex; gap: 10px; flex-wrap: wrap;">';
+            for (const img of entry.images.slice(0, 6)) {
+                html += `<img src="${img}" style="width: 180px; height: 180px; object-fit: cover; border-radius: 8px;" crossorigin="anonymous">`;
+            }
+            html += '</div>';
+        }
+        
+        entryDiv.innerHTML = html;
+        contentDiv.appendChild(entryDiv);
+        
+        updatePDFProgress(10 + ((i + 1) / filtered.length * 40), `正在排版第 ${i + 1}/${filtered.length} 篇...`);
+    }
+    
+    container.appendChild(contentDiv);
+    
+    // 等待图片加载
+    updatePDFProgress(60, '正在加载图片...');
+    await waitForImages(container);
+    
+    // 使用 html2canvas 渲染整个文档
+    updatePDFProgress(80, '正在生成 PDF...');
+    
+    const canvas = await html2canvas(container, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         width: 794,
-        height: 1123
+        height: container.scrollHeight,
+        windowWidth: 794,
+        windowHeight: container.scrollHeight
     });
     
-    const coverImg = coverCanvas.toDataURL('image/png');
-    const coverHeight = (coverCanvas.height * contentWidth) / coverCanvas.width;
-    pdf.addImage(coverImg, 'PNG', margin, margin, contentWidth, Math.min(coverHeight, pageHeight - margin * 2));
+    // 计算分页
+    const imgData = canvas.toDataURL('image/png');
+    const imgWidth = contentWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const pageHeightPx = pageHeight - margin * 2;
     
-    // 生成每页日记
-    for (let i = 0; i < filtered.length; i++) {
-        updatePDFProgress(((i + 1) / filtered.length * 100).toFixed(0), `正在生成第 ${i + 1}/${filtered.length} 页...`);
+    let heightLeft = imgHeight;
+    let position = 0;
+    let pageCount = 0;
+    
+    // 添加第一页
+    pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+    heightLeft -= pageHeightPx;
+    
+    // 添加后续页（自动分页）
+    while (heightLeft > 0) {
+        position = heightLeft - imgHeight + margin;
+        pageCount++;
         
-        const entry = filtered[i];
-        const date = new Date(entry.createdAt);
-        const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-        
-        // 创建页面内容
-        const pageDiv = document.createElement('div');
-        pageDiv.className = 'pdf-page';
-        
-        let html = `
-            <div class="pdf-date">${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${weekdays[date.getDay()]}</div>
-        `;
-        
-        if (includeTitle && entry.title) {
-            html += `<div class="pdf-title">${escapeHtml(entry.title)}</div>`;
-        }
-        
-        html += `<div class="pdf-content">${escapeHtml(entry.content)}</div>`;
-        
-        if (includeImages && entry.images && entry.images.length) {
-            html += '<div class="pdf-images">';
-            for (const img of entry.images.slice(0, 4)) {
-                html += `<img src="${img}" crossorigin="anonymous">`;
-            }
-            html += '</div>';
-        }
-        
-        pageDiv.innerHTML = html;
-        container.appendChild(pageDiv);
-        
-        // 等待图片加载
-        await waitForImages(pageDiv);
-        
-        // 渲染为 canvas
-        const canvas = await html2canvas(pageDiv, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff',
-            width: 794,
-            height: Math.max(1123, pageDiv.scrollHeight)
-        });
-        
-        // 添加新页
         pdf.addPage();
+        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
         
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * contentWidth) / canvas.width;
-        
-        pdf.addImage(imgData, 'PNG', margin, margin, contentWidth, Math.min(imgHeight, pageHeight - margin * 2));
-        
-        // 清理
-        container.removeChild(pageDiv);
+        heightLeft -= pageHeightPx;
     }
     
     // 隐藏容器
