@@ -4,812 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>工作笔记 | WorkNote</title>
-    <link rel="manifest" href="manifest-worknote.json">
-    <meta name="theme-color" content="#7c4dff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="工作笔记">
-    <link rel="apple-touch-icon" href="worknote-icon-192.png">
-    <!-- Markdown 编辑器 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js"></script>
-    <!-- PDF 导出 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- 代码高亮 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/core.min.js"></script>
+    <!-- [保持原有 head 内容] -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #fafafa;
-            --surface: #ffffff;
-            --primary: #7c4dff;
-            --primary-light: #b388ff;
-            --primary-dark: #651fff;
-            --secondary: #00b0ff;
-            --text: #212121;
-            --text-secondary: #757575;
-            --divider: #e0e0e0;
-            --shadow: rgba(0,0,0,0.08);
-        }
-
-        body {
-            min-height: 100vh;
-            background: var(--bg);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* 头部 */
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px var(--shadow);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 1.5rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .icon-btn {
-            width: 40px;
-            height: 40px;
+        /* [保持原有样式，添加以下新样式] */
+        
+        /* 删除按钮 */
+        .delete-notebook-btn {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             border: none;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .icon-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1);
-        }
-
-        /* 主布局 */
-        .app-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            min-height: calc(100vh - 80px);
-        }
-
-        /* 侧边栏 - 笔记本列表 */
-        .sidebar {
-            width: 280px;
-            background: var(--surface);
-            border-right: 1px solid var(--divider);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--divider);
-        }
-
-        .sidebar-title {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 15px;
-        }
-
-        .new-notebook-btn {
-            width: 100%;
-            padding: 12px;
-            border: 2px dashed var(--divider);
-            border-radius: 8px;
             background: transparent;
-            color: var(--text-secondary);
             cursor: pointer;
+            opacity: 0;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
         }
 
-        .new-notebook-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+        .notebook-item:hover .delete-notebook-btn {
+            opacity: 1;
         }
 
-        .notebook-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
+        .delete-notebook-btn:hover {
+            background: #ffebee;
         }
 
-        .notebook-item {
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 5px;
+        .note-actions-row {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .notebook-item:hover {
-            background: var(--bg);
-        }
-
-        .notebook-item.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .notebook-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .notebook-item.active .notebook-icon {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .notebook-info {
-            flex: 1;
-        }
-
-        .notebook-name {
-            font-weight: 500;
-            margin-bottom: 3px;
-        }
-
-        .notebook-count {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        /* 主内容区 */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        /* 笔记列表头部 */
-        .notes-header {
-            padding: 20px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--divider);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .notes-title {
-            font-size: 1.3rem;
-            font-weight: 500;
-        }
-
-        .notes-actions {
-            display: flex;
             gap: 10px;
-            align-items: center;
         }
 
-        .sort-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid var(--divider);
-            background: white;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .sort-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .new-note-btn {
-            padding: 10px 20px;
-            border-radius: 20px;
+        .delete-note-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             border: none;
-            background: var(--primary);
-            color: white;
+            background: transparent;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .new-note-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
+        .note-item:hover .delete-note-btn {
+            opacity: 1;
         }
 
-        /* 笔记列表 */
-        .notes-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
+        .delete-note-btn:hover {
+            background: #ffebee;
         }
 
-        .note-item {
-            background: var(--surface);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px var(--shadow);
-            cursor: pointer;
-            transition: all 0.3s;
-            border-left: 4px solid transparent;
-        }
-
-        .note-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px var(--shadow);
-            border-left-color: var(--primary);
-        }
-
-        .note-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-        }
-
-        .note-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text);
-        }
-
-        .note-time {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .note-preview {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .note-tags {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-
-        .note-tag {
-            padding: 4px 12px;
-            border-radius: 15px;
-            background: var(--bg);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        /* 空状态 */
-        .empty-state {
+        /* 导出样式 */
+        .export-cover {
             text-align: center;
-            padding: 80px 20px;
-            color: var(--text-secondary);
+            padding: 200px 0;
+            page-break-after: always;
         }
 
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        /* 编辑器页面 */
-        .editor-page {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg);
-            z-index: 200;
-            flex-direction: column;
-        }
-
-        .editor-page.active {
-            display: flex;
-        }
-
-        .editor-header {
-            background: var(--surface);
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--divider);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .editor-title-input {
-            flex: 1;
-            margin: 0 20px;
-        }
-
-        .editor-title-input input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 1px solid var(--divider);
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-family: inherit;
-        }
-
-        .editor-title-input input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .editor-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .editor-btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .editor-btn.save {
-            background: var(--primary);
-            color: white;
-        }
-
-        .editor-btn.save:hover {
-            background: var(--primary-dark);
-        }
-
-        .editor-btn.secondary {
-            background: var(--bg);
-            color: var(--text-secondary);
-        }
-
-        .editor-btn.secondary:hover {
-            background: var(--divider);
-        }
-
-        .editor-container {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .editor-pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .editor-toolbar {
-            padding: 10px 20px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--divider);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .toolbar-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .toolbar-btn:hover {
-            background: var(--bg);
-            color: var(--primary);
-        }
-
-        .editor-content {
-            flex: 1;
-            display: flex;
-        }
-
-        .CodeMirror {
-            flex: 1;
-            height: 100% !important;
-            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 15px;
-        }
-
-        .editor-preview {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            background: var(--surface);
-        }
-
-        .editor-preview-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Markdown 预览样式 */
-        .markdown-body {
-            font-size: 16px;
-            line-height: 1.8;
-        }
-
-        .markdown-body h1 {
-            font-size: 2em;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .markdown-body h2 {
-            font-size: 1.5em;
-            margin-top: 30px;
-            margin-bottom: 15px;
+        .export-cover h1 {
+            font-size: 48px;
             color: var(--primary-dark);
+            margin-bottom: 40px;
         }
 
-        .markdown-body h3 {
-            font-size: 1.25em;
-            margin-top: 25px;
-            margin-bottom: 10px;
-        }
-
-        .markdown-body p {
-            margin-bottom: 15px;
-        }
-
-        .markdown-body code {
-            background: var(--bg);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'SF Mono', monospace;
-            font-size: 0.9em;
-        }
-
-        .markdown-body pre {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 10px;
-            overflow-x: auto;
-            margin-bottom: 20px;
-        }
-
-        .markdown-body pre code {
-            background: none;
-            padding: 0;
-        }
-
-        .markdown-body blockquote {
-            border-left: 4px solid var(--primary);
-            padding-left: 20px;
-            margin: 20px 0;
-            color: var(--text-secondary);
-        }
-
-        .markdown-body ul, .markdown-body ol {
-            margin-bottom: 15px;
-            padding-left: 30px;
-        }
-
-        .markdown-body li {
-            margin-bottom: 8px;
-        }
-
-        .markdown-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .markdown-body th, .markdown-body td {
-            border: 1px solid var(--divider);
-            padding: 12px;
-            text-align: left;
-        }
-
-        .markdown-body th {
-            background: var(--bg);
-            font-weight: 600;
-        }
-
-        .markdown-body img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-
-        /* 弹窗 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 300;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--surface);
-            padding: 30px;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            color: var(--text);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid var(--divider);
-            border-radius: 10px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            font-family: inherit;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-        }
-
-        .modal-btn.primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .modal-btn.secondary {
-            background: var(--bg);
-            color: var(--text-secondary);
-        }
-
-        /* 设置面板 */
-        .settings-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 400px;
-            max-width: 90%;
-            height: 100%;
-            background: var(--surface);
-            box-shadow: -5px 0 30px var(--shadow);
-            z-index: 250;
-            flex-direction: column;
-        }
-
-        .settings-panel.active {
-            display: flex;
-        }
-
-        .settings-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--divider);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .settings-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .settings-section {
-            margin-bottom: 30px;
-        }
-
-        .settings-section-title {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 15px;
-        }
-
-        /* 加载提示 */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255,255,255,0.9);
-            justify-content: center;
-            align-items: center;
-            z-index: 400;
-            flex-direction: column;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--divider);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--text);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 30px;
-            font-size: 0.95rem;
-            z-index: 500;
-            animation: fadeInUp 0.3s ease;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: -280px;
-                height: 100%;
-                z-index: 150;
-                transition: left 0.3s;
-            }
-
-            .sidebar.open {
-                left: 0;
-            }
-
-            .menu-toggle {
-                display: block;
-            }
-        }
-
-        /* 导出预览 */
-        .export-preview-container {
-            position: fixed;
-            left: -9999px;
-            top: 0;
-            width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
-            background: white;
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            line-height: 1.8;
-        }
-
-        .export-preview-content h1 {
-            font-size: 28px;
-            color: var(--primary-dark);
-            border-bottom: 3px solid var(--primary);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-
-        .export-preview-content h2 {
-            font-size: 20px;
-            color: var(--primary);
-            margin-top: 25px;
-            margin-bottom: 15px;
-        }
-
-        .export-preview-content .note-meta {
+        .export-meta {
             color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .export-note {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
             border-bottom: 1px solid #eee;
+            page-break-inside: avoid;
+        }
+
+        .export-note-title {
+            font-size: 24px;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .export-note-time {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* 编辑器按钮禁用状态 */
+        .editor-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
+    <!-- [保持原有 body 结构，修改以下部分] -->
+    
     <!-- 头部 -->
     <header>
         <div class="header-content">
@@ -832,9 +131,7 @@
                     <span>新建笔记本</span>
                 </button>
             </div>
-            <div class="notebook-list" id="notebookList">
-                <!-- 动态生成 -->
-            </div>
+            <div class="notebook-list" id="notebookList"></div>
         </aside>
 
         <!-- 主内容 -->
@@ -844,6 +141,9 @@
                 <div class="notes-actions">
                     <button class="sort-btn" onclick="toggleSort()" id="sortBtn">
                         📅 最近修改
+                    </button>
+                    <button class="sort-btn" onclick="exportNotebookPDF()" id="exportNotebookBtn" disabled>
+                        📄 导出笔记本
                     </button>
                     <button class="new-note-btn" onclick="createNewNote()" id="newNoteBtn" disabled>
                         <span>+</span>
@@ -870,6 +170,12 @@
                 <input type="text" id="noteTitleInput" placeholder="笔记标题">
             </div>
             <div class="editor-actions">
+                <button class="editor-btn secondary" onclick="configureImageUpload()" id="imageConfigBtn">
+                    🖼️ 图床配置
+                </button>
+                <button class="editor-btn secondary" onclick="insertImage()" id="insertImageBtn" disabled>
+                    🖼️ 插入图片
+                </button>
                 <button class="editor-btn secondary" onclick="exportNotePDF()">
                     📄 导出PDF
                 </button>
@@ -885,622 +191,828 @@
         </div>
     </div>
 
-    <!-- 新建笔记本弹窗 -->
-    <div class="modal" id="newNotebookModal">
-        <div class="modal-content">
-            <h3 class="modal-title">📓 新建笔记本</h3>
-            <input type="text" class="form-input" id="notebookNameInput" placeholder="笔记本名称" maxlength="20">
-            <div class="modal-actions">
-                <button class="modal-btn secondary" onclick="closeModal('newNotebookModal')">取消</button>
-                <button class="modal-btn primary" onclick="createNotebook()">创建</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 设置面板 -->
-    <div class="settings-panel" id="settingsPanel">
-        <div class="settings-header">
-            <h3>⚙️ 设置</h3>
-            <button class="icon-btn" onclick="closeSettings()" style="background: var(--bg); color: var(--text);">✕</button>
-        </div>
-        <div class="settings-content">
-            <div class="settings-section">
-                <div class="settings-section-title">GitHub 同步</div>
-                <input type="text" class="form-input" id="githubToken" placeholder="GitHub Token (ghp_...)">
-                <input type="text" class="form-input" id="githubRepo" placeholder="仓库名 (用户名/仓库)">
-                <input type="text" class="form-input" id="githubBranch" value="main" placeholder="分支">
-                <button class="modal-btn primary" onclick="saveGithubSettings()" style="width: 100%;">保存并测试</button>
-            </div>
-            <div class="settings-section">
-                <div class="settings-section-title">数据管理</div>
-                <button class="modal-btn secondary" onclick="exportAllData()" style="width: 100%; margin-bottom: 10px;">📥 导出全部数据</button>
-                <button class="modal-btn secondary" onclick="importData()" style="width: 100%;">📤 导入数据</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
-            </div>
-        </div>
-    </div>
-
-    <!-- 加载提示 -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-        <p style="margin-top: 20px; color: var(--text-secondary);">同步中...</p>
-    </div>
+    <!-- [保持其他弹窗不变] -->
 
     <script>
-// ============================================
-// 数据存储
-// ============================================
-
-// 笔记本和笔记数据
-let notebooks = JSON.parse(localStorage.getItem('worknote_notebooks')) || [];
-let notes = JSON.parse(localStorage.getItem('worknote_notes')) || [];
-
-// 当前状态
-let currentNotebookId = null;
-let currentNoteId = null;
-let sortBy = 'updated'; // 'updated' 或 'created'
-let easyMDE = null;
-
-// GitHub 配置
-let githubConfig = {
-    token: localStorage.getItem('worknote_github_token') || '',
-    repo: localStorage.getItem('worknote_github_repo') || '',
-    branch: localStorage.getItem('worknote_github_branch') || 'main'
-};
-
-// ============================================
-// 初始化
-// ============================================
-
-document.addEventListener('DOMContentInitialized', () => {
-    renderNotebookList();
-    loadGithubSettings();
-});
-
-// ============================================
-// 笔记本管理
-// ============================================
-
-function openNewNotebookModal() {
-    document.getElementById('notebookNameInput').value = '';
-    document.getElementById('newNotebookModal').classList.add('active');
-    setTimeout(() => document.getElementById('notebookNameInput').focus(), 100);
-}
-
-function createNotebook() {
-    const name = document.getElementById('notebookNameInput').value.trim();
-    if (!name) {
-        showToast('请输入笔记本名称');
-        return;
-    }
-    
-    const notebook = {
-        id: Date.now().toString(),
-        name: name,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    };
-    
-    notebooks.push(notebook);
-    saveData();
-    
-    closeModal('newNotebookModal');
-    renderNotebookList();
-    selectNotebook(notebook.id);
-    showToast('笔记本创建成功');
-}
-
-function renderNotebookList() {
-    const container = document.getElementById('notebookList');
-    
-    if (notebooks.length === 0) {
-        container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-secondary);">还没有笔记本</div>';
-        return;
-    }
-    
-    container.innerHTML = notebooks.map(nb => {
-        const noteCount = notes.filter(n => n.notebookId === nb.id).length;
-        const isActive = nb.id === currentNotebookId;
+        // ============================================
+        // 数据存储
+        // ============================================
         
-        return `
-            <div class="notebook-item ${isActive ? 'active' : ''}" onclick="selectNotebook('${nb.id}')">
-                <div class="notebook-icon">📓</div>
-                <div class="notebook-info">
-                    <div class="notebook-name">${escapeHtml(nb.name)}</div>
-                    <div class="notebook-count">${noteCount} 篇笔记</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function selectNotebook(id) {
-    currentNotebookId = id;
-    const notebook = notebooks.find(n => n.id === id);
-    
-    document.getElementById('currentNotebookName').textContent = notebook ? notebook.name : '请选择笔记本';
-    document.getElementById('newNoteBtn').disabled = !notebook;
-    
-    renderNotebookList();
-    renderNotesList();
-}
-
-// ============================================
-// 笔记管理
-// ============================================
-
-function createNewNote() {
-    if (!currentNotebookId) return;
-    
-    currentNoteId = null;
-    document.getElementById('noteTitleInput').value = '';
-    
-    // 初始化编辑器
-    initEditor('');
-    
-    document.getElementById('editorPage').classList.add('active');
-}
-
-function editNote(id) {
-    const note = notes.find(n => n.id === id);
-    if (!note) return;
-    
-    currentNoteId = id;
-    document.getElementById('noteTitleInput').value = note.title || '';
-    
-    initEditor(note.content || '');
-    
-    document.getElementById('editorPage').classList.add('active');
-}
-
-function initEditor(content) {
-    if (easyMDE) {
-        easyMDE.toTextArea();
-        easyMDE = null;
-    }
-    
-    const textarea = document.getElementById('markdownEditor');
-    textarea.value = content;
-    
-    easyMDE = new EasyMDE({
-        element: textarea,
-        spellChecker: false,
-        autosave: {
-            enabled: false
-        },
-        placeholder: '开始写作...',
-        toolbar: [
-            'bold', 'italic', 'heading', '|',
-            'quote', 'unordered-list', 'ordered-list', '|',
-            'link', 'image', 'code', 'table', '|',
-            'preview', 'side-by-side', 'fullscreen', '|',
-            'guide'
-        ],
-        status: false,
-        minHeight: 'calc(100vh - 200px)'
-    });
-}
-
-function saveNote() {
-    const title = document.getElementById('noteTitleInput').value.trim() || '无标题';
-    const content = easyMDE.value();
-    const now = new Date().toISOString();
-    
-    if (currentNoteId) {
-        // 更新
-        const index = notes.findIndex(n => n.id === currentNoteId);
-        notes[index] = {
-            ...notes[index],
-            title,
-            content,
-            updatedAt: now
+        let notebooks = JSON.parse(localStorage.getItem('worknote_notebooks')) || [];
+        let notes = JSON.parse(localStorage.getItem('worknote_notes')) || [];
+        
+        let currentNotebookId = null;
+        let currentNoteId = null;
+        let sortBy = 'updated';
+        let easyMDE = null;
+        
+        let githubConfig = {
+            token: localStorage.getItem('worknote_github_token') || '',
+            repo: localStorage.getItem('worknote_github_repo') || '',
+            branch: localStorage.getItem('worknote_github_branch') || 'main'
         };
         
-        // 移到最前（按修改时间排序）
-        const note = notes.splice(index, 1)[0];
-        notes.unshift(note);
-    } else {
-        // 新建
-        const note = {
-            id: Date.now().toString(),
-            notebookId: currentNotebookId,
-            title,
-            content,
-            createdAt: now,
-            updatedAt: now
+        // 图片上传配置（独立）
+        let imageConfig = {
+            token: localStorage.getItem('worknote_image_token') || '',
+            repo: localStorage.getItem('worknote_image_repo') || '',
+            branch: localStorage.getItem('worknote_image_branch') || 'main'
         };
-        notes.unshift(note);
-        currentNoteId = note.id;
-    }
-    
-    saveData();
-    showToast('保存成功');
-}
-
-function closeEditor() {
-    document.getElementById('editorPage').classList.remove('active');
-    renderNotesList();
-    
-    if (easyMDE) {
-        easyMDE.toTextArea();
-        easyMDE = null;
-    }
-}
-
-function toggleSort() {
-    sortBy = sortBy === 'updated' ? 'created' : 'updated';
-    document.getElementById('sortBtn').textContent = sortBy === 'updated' ? '📅 最近修改' : '📅 创建时间';
-    renderNotesList();
-}
-
-function renderNotesList() {
-    const container = document.getElementById('notesList');
-    
-    if (!currentNotebookId) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-icon">📓</div>
-                <p>选择或创建一个笔记本开始</p>
-            </div>
-        `;
-        return;
-    }
-    
-    let notebookNotes = notes.filter(n => n.notebookId === currentNotebookId);
-    
-    // 排序
-    if (sortBy === 'created') {
-        notebookNotes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
-    // 默认按 updatedAt 排序（已在保存时处理）
-    
-    if (notebookNotes.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-icon">📝</div>
-                <p>还没有笔记，点击右上角新建</p>
-            </div>
-        `;
-        return;
-    }
-    
-    container.innerHTML = notebookNotes.map(note => {
-        const updated = formatDateTime(note.updatedAt);
-        const preview = note.content ? note.content.substring(0, 150).replace(/[#*`]/g, '') + '...' : '无内容';
         
-        return `
-            <div class="note-item" onclick="editNote('${note.id}')">
-                <div class="note-header">
-                    <div class="note-title">${escapeHtml(note.title)}</div>
-                    <div class="note-time">
-                        <span>🕐</span>
-                        <span>${updated}</span>
-                    </div>
-                </div>
-                <div class="note-preview">${escapeHtml(preview)}</div>
-            </div>
-        `;
-    }).join('');
-}
-
-// ============================================
-// PDF 导出
-// ============================================
-
-async function exportNotePDF() {
-    const title = document.getElementById('noteTitleInput').value.trim() || '无标题';
-    const content = easyMDE.value();
-    const now = new Date();
-    
-    // 创建预览容器
-    const container = document.createElement('div');
-    container.className = 'export-preview-container';
-    container.innerHTML = `
-        <div class="export-preview-content">
-            <h1>${escapeHtml(title)}</h1>
-            <div class="note-meta">
-                导出时间：${formatDateTime(now.toISOString())}
-            </div>
-            <div class="markdown-body">${marked.parse(content)}</div>
-        </div>
-    `;
-    document.body.appendChild(container);
-    
-    // 渲染代码高亮
-    container.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block);
-    });
-    
-    // 生成 PDF
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    
-    const canvas = await html2canvas(container, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-    });
-    
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210 - 20 * 2;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    
-    let heightLeft = imgHeight;
-    let position = 0;
-    
-    pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
-    heightLeft -= 297 - 40;
-    
-    while (heightLeft > 0) {
-        position = heightLeft - imgHeight + 20;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-        heightLeft -= 297 - 40;
-    }
-    
-    pdf.save(`${title}_${formatDateFile(now)}.pdf`);
-    
-    document.body.removeChild(container);
-    showToast('PDF 导出成功');
-}
-
-// ============================================
-// GitHub 同步
-// ============================================
-
-function openSettings() {
-    document.getElementById('settingsPanel').classList.add('active');
-}
-
-function closeSettings() {
-    document.getElementById('settingsPanel').classList.remove('active');
-}
-
-function loadGithubSettings() {
-    document.getElementById('githubToken').value = githubConfig.token;
-    document.getElementById('githubRepo').value = githubConfig.repo;
-    document.getElementById('githubBranch').value = githubConfig.branch;
-}
-
-function saveGithubSettings() {
-    githubConfig.token = document.getElementById('githubToken').value.trim();
-    githubConfig.repo = document.getElementById('githubRepo').value.trim();
-    githubConfig.branch = document.getElementById('githubBranch').value.trim() || 'main';
-    
-    localStorage.setItem('worknote_github_token', githubConfig.token);
-    localStorage.setItem('worknote_github_repo', githubConfig.repo);
-    localStorage.setItem('worknote_github_branch', githubConfig.branch);
-    
-    testGithubConnection();
-}
-
-async function testGithubConnection() {
-    if (!githubConfig.token || !githubConfig.repo) {
-        showToast('请填写完整的 GitHub 配置');
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        const response = await fetch(`https://api.github.com/repos/${githubConfig.repo}`, {
-            headers: {
-                'Authorization': `token ${githubConfig.token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
+        // ============================================
+        // 初始化
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotebookList();
+            loadGithubSettings();
         });
         
-        if (!response.ok) throw new Error('连接失败');
+        // ============================================
+        // 笔记本管理
+        // ============================================
         
-        showToast('✅ GitHub 连接成功');
-        closeSettings();
-        
-    } catch (err) {
-        showToast('❌ 连接失败：' + err.message);
-    } finally {
-        showLoading(false);
-    }
-}
-
-async function syncToGithub() {
-    if (!githubConfig.token || !githubConfig.repo) {
-        showToast('请先配置 GitHub');
-        openSettings();
-        return;
-    }
-    
-    showLoading(true);
-    
-    try {
-        // 读取现有数据
-        const readRes = await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/worknote-data.json`, {
-            headers: { 'Authorization': `token ${githubConfig.token}` }
-        });
-        
-        let sha = null;
-        if (readRes.ok) {
-            const data = await readRes.json();
-            sha = data.sha;
+        function openNewNotebookModal() {
+            document.getElementById('notebookNameInput').value = '';
+            document.getElementById('newNotebookModal').classList.add('active');
+            setTimeout(() => document.getElementById('notebookNameInput').focus(), 100);
         }
         
-        // 保存数据
-        const saveData = {
-            notebooks,
-            notes,
-            syncedAt: new Date().toISOString()
-        };
-        
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(saveData, null, 2))));
-        
-        const body = {
-            message: `Sync worknote data: ${new Date().toLocaleString()}`,
-            content: content,
-            branch: githubConfig.branch
-        };
-        
-        if (sha) body.sha = sha;
-        
-        const saveRes = await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/worknote-data.json`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${githubConfig.token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
-        
-        if (!saveRes.ok) throw new Error('保存失败');
-        
-        showToast('✅ 同步成功');
-        
-    } catch (err) {
-        console.error(err);
-        showToast('❌ 同步失败：' + err.message);
-    } finally {
-        showLoading(false);
-    }
-}
-
-// ============================================
-// 数据导入导出
-// ============================================
-
-function exportAllData() {
-    const data = {
-        notebooks,
-        notes,
-        exportedAt: new Date().toISOString()
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `worknote-backup-${formatDateFile(new Date())}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    showToast('数据已导出');
-}
-
-function importData() {
-    document.getElementById('importFile').click();
-}
-
-function handleImport(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        try {
-            const data = JSON.parse(e.target.result);
+        function createNotebook() {
+            const name = document.getElementById('notebookNameInput').value.trim();
+            if (!name) {
+                showToast('请输入笔记本名称');
+                return;
+            }
             
-            if (confirm(`确定导入？这将覆盖现有 ${notebooks.length} 个笔记本和 ${notes.length} 篇笔记`)) {
-                notebooks = data.notebooks || [];
-                notes = data.notes || [];
-                saveData();
-                
-                currentNotebookId = null;
-                renderNotebookList();
-                renderNotesList();
-                
-                showToast('数据导入成功');
-            }
-        } catch (err) {
-            showToast('导入失败：文件格式错误');
+            const notebook = {
+                id: Date.now().toString(),
+                name: name,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            notebooks.push(notebook);
+            saveData();
+            
+            closeModal('newNotebookModal');
+            renderNotebookList();
+            selectNotebook(notebook.id);
+            showToast('笔记本创建成功');
         }
-    };
-    reader.readAsText(file);
-    
-    event.target.value = '';
-}
-
-// ============================================
-// 工具函数
-// ============================================
-
-function saveData() {
-    localStorage.setItem('worknote_notebooks', JSON.stringify(notebooks));
-    localStorage.setItem('worknote_notes', JSON.stringify(notes));
-}
-
-function formatDateTime(isoString) {
-    const date = new Date(isoString);
-    const now = new Date();
-    const diff = now - date;
-    
-    // 小于1小时显示相对时间
-    if (diff < 60000) return '刚刚';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`;
-    if (diff < 86400000 && now.getDate() === date.getDate()) {
-        return `今天 ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    }
-    
-    return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function formatDateFile(date) {
-    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}`;
-}
-
-function pad(n) {
-    return n < 10 ? '0' + n : n;
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function closeModal(id) {
-    document.getElementById(id).classList.remove('active');
-}
-
-function showLoading(show) {
-    document.getElementById('loadingOverlay').classList.toggle('active', show);
-}
-
-function showToast(message) {
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-    
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.remove(), 3000);
-}
-
-// 简单的 Markdown 解析（用于预览）
-const marked = {
-    parse: (text) => {
-        return text
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-            .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-            .replace(/\*(.*)\*/gim, '<i>$1</i>')
-            .replace(/`([^`]+)`/gim, '<code>$1</code>')
-            .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
-            .replace(/\n/gim, '<br>');
-    }
-};
-
-// 点击外部关闭弹窗
-document.querySelectorAll('.modal').forEach(modal => {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal(modal.id);
-    });
-});
-
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
-    renderNotebookList();
-    loadGithubSettings();
-});
+        
+        function deleteNotebook(id) {
+            const notebook = notebooks.find(n => n.id === id);
+            const noteCount = notes.filter(n => n.notebookId === id).length;
+            
+            if (!confirm(`确定删除笔记本"${notebook.name}"？\n其中包含 ${noteCount} 篇笔记，此操作不可恢复！`)) {
+                return;
+            }
+            
+            notebooks = notebooks.filter(n => n.id !== id);
+            notes = notes.filter(n => n.notebookId !== id);
+            
+            if (currentNotebookId === id) {
+                currentNotebookId = null;
+                document.getElementById('currentNotebookName').textContent = '请选择笔记本';
+                document.getElementById('newNoteBtn').disabled = true;
+                document.getElementById('exportNotebookBtn').disabled = true;
+                renderNotesList();
+            }
+            
+            saveData();
+            renderNotebookList();
+            showToast('笔记本已删除');
+        }
+        
+        function renderNotebookList() {
+            const container = document.getElementById('notebookList');
+            
+            if (notebooks.length === 0) {
+                container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-secondary);">还没有笔记本</div>';
+                return;
+            }
+            
+            container.innerHTML = notebooks.map(nb => {
+                const noteCount = notes.filter(n => n.notebookId === nb.id).length;
+                const isActive = nb.id === currentNotebookId;
+                
+                return `
+                    <div class="notebook-item ${isActive ? 'active' : ''}" onclick="selectNotebook('${nb.id}')">
+                        <div class="notebook-icon">📓</div>
+                        <div class="notebook-info">
+                            <div class="notebook-name">${escapeHtml(nb.name)}</div>
+                            <div class="notebook-count">${noteCount} 篇笔记</div>
+                        </div>
+                        <button class="delete-notebook-btn" onclick="event.stopPropagation(); deleteNotebook('${nb.id}')" title="删除笔记本">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function selectNotebook(id) {
+            currentNotebookId = id;
+            const notebook = notebooks.find(n => n.id === id);
+            
+            document.getElementById('currentNotebookName').textContent = notebook ? notebook.name : '请选择笔记本';
+            document.getElementById('newNoteBtn').disabled = !notebook;
+            document.getElementById('exportNotebookBtn').disabled = !notebook;
+            
+            renderNotebookList();
+            renderNotesList();
+        }
+        
+        // ============================================
+        // 笔记管理
+        // ============================================
+        
+        function createNewNote() {
+            if (!currentNotebookId) return;
+            
+            currentNoteId = null;
+            document.getElementById('noteTitleInput').value = '';
+            
+            initEditor('');
+            
+            document.getElementById('editorPage').classList.add('active');
+        }
+        
+        function editNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            
+            currentNoteId = id;
+            document.getElementById('noteTitleInput').value = note.title || '';
+            
+            initEditor(note.content || '');
+            
+            document.getElementById('editorPage').classList.add('active');
+        }
+        
+        function deleteNote(id) {
+            if (!confirm('确定删除这篇笔记？此操作不可恢复！')) {
+                return;
+            }
+            
+            notes = notes.filter(n => n.id !== id);
+            
+            if (currentNoteId === id) {
+                closeEditor();
+            }
+            
+            saveData();
+            renderNotesList();
+            renderNotebookList();
+            showToast('笔记已删除');
+        }
+        
+        function initEditor(content) {
+            if (easyMDE) {
+                easyMDE.toTextArea();
+                easyMDE = null;
+            }
+            
+            const textarea = document.getElementById('markdownEditor');
+            textarea.value = content;
+            
+            easyMDE = new EasyMDE({
+                element: textarea,
+                spellChecker: false,
+                autosave: { enabled: false },
+                placeholder: '开始写作... 支持 Markdown 语法',
+                toolbar: [
+                    'bold', 'italic', 'heading', '|',
+                    'quote', 'unordered-list', 'ordered-list', '|',
+                    'link', 'image', 'code', 'table', '|',
+                    'preview', 'side-by-side', 'fullscreen', '|',
+                    'guide'
+                ],
+                status: false,
+                minHeight: 'calc(100vh - 200px)'
+            });
+            
+            updateImageButtonState();
+        }
+        
+        function saveNote() {
+            const title = document.getElementById('noteTitleInput').value.trim() || '无标题';
+            const content = easyMDE.value();
+            const now = new Date().toISOString();
+            
+            if (currentNoteId) {
+                const index = notes.findIndex(n => n.id === currentNoteId);
+                notes[index] = {
+                    ...notes[index],
+                    title,
+                    content,
+                    updatedAt: now
+                };
+                
+                const note = notes.splice(index, 1)[0];
+                notes.unshift(note);
+            } else {
+                const note = {
+                    id: Date.now().toString(),
+                    notebookId: currentNotebookId,
+                    title,
+                    content,
+                    createdAt: now,
+                    updatedAt: now
+                };
+                notes.unshift(note);
+                currentNoteId = note.id;
+            }
+            
+            saveData();
+            showToast('保存成功');
+        }
+        
+        function closeEditor() {
+            document.getElementById('editorPage').classList.remove('active');
+            renderNotesList();
+            
+            if (easyMDE) {
+                easyMDE.toTextArea();
+                easyMDE = null;
+            }
+        }
+        
+        function toggleSort() {
+            sortBy = sortBy === 'updated' ? 'created' : 'updated';
+            document.getElementById('sortBtn').textContent = sortBy === 'updated' ? '📅 最近修改' : '📅 创建时间';
+            renderNotesList();
+        }
+        
+        function renderNotesList() {
+            const container = document.getElementById('notesList');
+            
+            if (!currentNotebookId) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📓</div>
+                        <p>选择或创建一个笔记本开始</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let notebookNotes = notes.filter(n => n.notebookId === currentNotebookId);
+            
+            if (sortBy === 'created') {
+                notebookNotes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+            
+            if (notebookNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <p>还没有笔记，点击右上角新建</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = notebookNotes.map(note => {
+                const updated = formatDateTime(note.updatedAt);
+                const preview = note.content ? note.content.substring(0, 150).replace(/[#*`]/g, '') + '...' : '无内容';
+                
+                return `
+                    <div class="note-item" onclick="editNote('${note.id}')">
+                        <div class="note-header">
+                            <div class="note-title">${escapeHtml(note.title)}</div>
+                            <div class="note-actions-row">
+                                <div class="note-time">
+                                    <span>🕐</span>
+                                    <span>${updated}</span>
+                                </div>
+                                <button class="delete-note-btn" onclick="event.stopPropagation(); deleteNote('${note.id}')" title="删除笔记">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                        <div class="note-preview">${escapeHtml(preview)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // ============================================
+        // 图片上传
+        // ============================================
+        
+        function configureImageUpload() {
+            const token = prompt('GitHub Token (ghp_...):', imageConfig.token);
+            if (token === null) return;
+            
+            const repo = prompt('图片仓库 (用户名/仓库名):', imageConfig.repo);
+            if (repo === null) return;
+            
+            const branch = prompt('分支 (默认 main):', imageConfig.branch) || 'main';
+            
+            imageConfig.token = token.trim();
+            imageConfig.repo = repo.trim();
+            imageConfig.branch = branch.trim();
+            
+            localStorage.setItem('worknote_image_token', imageConfig.token);
+            localStorage.setItem('worknote_image_repo', imageConfig.repo);
+            localStorage.setItem('worknote_image_branch', imageConfig.branch);
+            
+            updateImageButtonState();
+            showToast('图床配置已保存');
+        }
+        
+        function updateImageButtonState() {
+            const btn = document.getElementById('insertImageBtn');
+            const hasConfig = imageConfig.token && imageConfig.repo;
+            btn.disabled = !hasConfig;
+            btn.textContent = hasConfig ? '🖼️ 插入图片' : '🖼️ 请先配置';
+        }
+        
+        async function insertImage() {
+            if (!imageConfig.token || !imageConfig.repo) {
+                configureImageUpload();
+                return;
+            }
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+            
+            input.onchange = async (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length === 0) return;
+                
+                showToast(`正在上传 ${files.length} 张图片...`);
+                
+                for (const file of files) {
+                    try {
+                        const url = await uploadImageToGithub(file);
+                        const cm = easyMDE.codemirror;
+                        const cursor = cm.getCursor();
+                        const imageMarkdown = `\n![${file.name}](${url})\n`;
+                        cm.replaceRange(imageMarkdown, cursor);
+                        showToast('图片已插入');
+                    } catch (err) {
+                        showToast('上传失败: ' + err.message);
+                    }
+                }
+            };
+            
+            input.click();
+        }
+        
+        async function uploadImageToGithub(file) {
+            const compressed = await compressImage(file, 1600, 0.85);
+            const base64Data = compressed.split(',')[1];
+            
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+            const random = Math.random().toString(36).substring(2, 10);
+            const ext = file.name.split('.').pop() || 'jpg';
+            const filename = `images/${dateStr}_${random}.${ext}`;
+            
+            const response = await fetch(`https://api.github.com/repos/${imageConfig.repo}/contents/${filename}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${imageConfig.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Add image: ${file.name}`,
+                    content: base64Data,
+                    branch: imageConfig.branch
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Upload failed');
+            }
+            
+            return `https://cdn.jsdelivr.net/gh/${imageConfig.repo}@${imageConfig.branch}/${filename}`;
+        }
+        
+        function compressImage(file, maxWidth = 1600, quality = 0.85) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (maxWidth / width) * height;
+                            width = maxWidth;
+                        }
+                        
+                        canvas.width = Math.floor(width);
+                        canvas.height = Math.floor(height);
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // ============================================
+        // PDF 导出
+        // ============================================
+        
+        async function exportNotePDF() {
+            const title = document.getElementById('noteTitleInput').value.trim() || '无标题';
+            const content = easyMDE.value();
+            const now = new Date();
+            
+            const container = document.createElement('div');
+            container.className = 'export-preview-container';
+            container.innerHTML = `
+                <div class="export-preview-content">
+                    <h1>${escapeHtml(title)}</h1>
+                    <div class="note-meta">
+                        导出时间：${formatDateTime(now.toISOString())}
+                    </div>
+                    <div class="markdown-body">${marked.parse(content)}</div>
+                </div>
+            `;
+            document.body.appendChild(container);
+            
+            container.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            const canvas = await html2canvas(container, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 210 - 20 * 2;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            let heightLeft = imgHeight;
+            let position = 0;
+            
+            pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+            heightLeft -= 297 - 40;
+            
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight + 20;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+                heightLeft -= 297 - 40;
+            }
+            
+            pdf.save(`${title}_${formatDateFile(now)}.pdf`);
+            
+            document.body.removeChild(container);
+            showToast('PDF 导出成功');
+        }
+        
+        async function exportNotebookPDF() {
+            if (!currentNotebookId) return;
+            
+            const notebook = notebooks.find(n => n.id === currentNotebookId);
+            const notebookNotes = notes.filter(n => n.notebookId === currentNotebookId)
+                .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            
+            if (notebookNotes.length === 0) {
+                showToast('笔记本为空');
+                return;
+            }
+            
+            showLoading(true);
+            
+            const container = document.createElement('div');
+            container.className = 'export-preview-container';
+            
+            let html = `
+                <div class="export-cover">
+                    <h1>${escapeHtml(notebook.name)}</h1>
+                    <div class="export-meta">共 ${notebookNotes.length} 篇笔记</div>
+                    <div class="export-meta">导出时间：${formatDateTime(new Date().toISOString())}</div>
+                </div>
+            `;
+            
+            for (const note of notebookNotes) {
+                html += `
+                    <div class="export-note">
+                        <div class="export-note-title">${escapeHtml(note.title)}</div>
+                        <div class="export-note-time">最后修改：${formatDateTime(note.updatedAt)}</div>
+                        <div class="markdown-body">${marked.parse(note.content || '')}</div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            document.body.appendChild(container);
+            
+            container.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightElement(block);
+            });
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            const canvas = await html2canvas(container, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                windowWidth: 794
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 210 - 20 * 2;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            let heightLeft = imgHeight;
+            let position = 0;
+            
+            pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+            heightLeft -= 297 - 40;
+            
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight + 20;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+                heightLeft -= 297 - 40;
+            }
+            
+            pdf.save(`${notebook.name}_${formatDateFile(new Date())}.pdf`);
+            
+            document.body.removeChild(container);
+            showLoading(false);
+            showToast('笔记本导出成功');
+        }
+        
+        // ============================================
+        // GitHub 同步
+        // ============================================
+        
+        function openSettings() {
+            document.getElementById('settingsPanel').classList.add('active');
+        }
+        
+        function closeSettings() {
+            document.getElementById('settingsPanel').classList.remove('active');
+        }
+        
+        function loadGithubSettings() {
+            document.getElementById('githubToken').value = githubConfig.token;
+            document.getElementById('githubRepo').value = githubConfig.repo;
+            document.getElementById('githubBranch').value = githubConfig.branch;
+        }
+        
+        function saveGithubSettings() {
+            githubConfig.token = document.getElementById('githubToken').value.trim();
+            githubConfig.repo = document.getElementById('githubRepo').value.trim();
+            githubConfig.branch = document.getElementById('githubBranch').value.trim() || 'main';
+            
+            localStorage.setItem('worknote_github_token', githubConfig.token);
+            localStorage.setItem('worknote_github_repo', githubConfig.repo);
+            localStorage.setItem('worknote_github_branch', githubConfig.branch);
+            
+            testGithubConnection();
+        }
+        
+        async function testGithubConnection() {
+            if (!githubConfig.token || !githubConfig.repo) {
+                showToast('请填写完整的 GitHub 配置');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await fetch(`https://api.github.com/repos/${githubConfig.repo}`, {
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!response.ok) throw new Error('连接失败');
+                
+                showToast('✅ GitHub 连接成功');
+                closeSettings();
+                
+            } catch (err) {
+                showToast('❌ 连接失败：' + err.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        async function syncToGithub() {
+            if (!githubConfig.token || !githubConfig.repo) {
+                showToast('请先配置 GitHub');
+                openSettings();
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const readRes = await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/worknote-data.json`, {
+                    headers: { 'Authorization': `token ${githubConfig.token}` }
+                });
+                
+                let sha = null;
+                if (readRes.ok) {
+                    const data = await readRes.json();
+                    sha = data.sha;
+                }
+                
+                const saveData = {
+                    notebooks,
+                    notes,
+                    syncedAt: new Date().toISOString()
+                };
+                
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(saveData, null, 2))));
+                
+                const body = {
+                    message: `Sync worknote data: ${new Date().toLocaleString()}`,
+                    content: content,
+                    branch: githubConfig.branch
+                };
+                
+                if (sha) body.sha = sha;
+                
+                const saveRes = await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/worknote-data.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                
+                if (!saveRes.ok) throw new Error('保存失败');
+                
+                showToast('✅ 同步成功');
+                
+            } catch (err) {
+                console.error(err);
+                showToast('❌ 同步失败：' + err.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // ============================================
+        // 数据导入导出
+        // ============================================
+        
+        function exportAllData() {
+            const data = {
+                notebooks,
+                notes,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `worknote-backup-${formatDateFile(new Date())}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('数据已导出');
+        }
+        
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+        
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm(`确定导入？这将覆盖现有 ${notebooks.length} 个笔记本和 ${notes.length} 篇笔记`)) {
+                        notebooks = data.notebooks || [];
+                        notes = data.notes || [];
+                        saveData();
+                        
+                        currentNotebookId = null;
+                        renderNotebookList();
+                        renderNotesList();
+                        
+                        showToast('数据导入成功');
+                    }
+                } catch (err) {
+                    showToast('导入失败：文件格式错误');
+                }
+            };
+            reader.readAsText(file);
+            
+            event.target.value = '';
+        }
+        
+        // ============================================
+        // 工具函数
+        // ============================================
+        
+        function saveData() {
+            localStorage.setItem('worknote_notebooks', JSON.stringify(notebooks));
+            localStorage.setItem('worknote_notes', JSON.stringify(notes));
+        }
+        
+        function formatDateTime(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return '刚刚';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)} 分钟前`;
+            if (diff < 86400000 && now.getDate() === date.getDate()) {
+                return `今天 ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+            }
+            
+            return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        }
+        
+        function formatDateFile(date) {
+            return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}`;
+        }
+        
+        function pad(n) {
+            return n < 10 ? '0' + n : n;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('active', show);
+        }
+        
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // 简单的 Markdown 解析
+        const marked = {
+            parse: (text) => {
+                if (!text) return '';
+                return text
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
+                    .replace(/\*(.*)\*/gim, '<i>$1</i>')
+                    .replace(/`([^`]+)`/gim, '<code>$1</code>')
+                    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+                    .replace(/!\[(.*?)\]\((.*?)\)/gim, '<img alt="$1" src="$2" style="max-width:100%;">')
+                    .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
+                    .replace(/\n/gim, '<br>');
+            }
+        };
+        
+        // 点击外部关闭弹窗
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal(modal.id);
+            });
+        });
     </script>
 </body>
 </html>
