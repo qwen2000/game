@@ -10,6 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="工作笔记">
     <link rel="apple-touch-icon" href="worknote-icon-192.png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Markdown 编辑器 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css">
     <script src="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.js"></script>
@@ -394,12 +396,6 @@
             line-height: 1.6;
         }
 
-        .note-preview h1, .note-preview h2, .note-preview h3 {
-            font-size: 1em;
-            margin: 0;
-            color: var(--text);
-        }
-
         .empty-state {
             text-align: center;
             padding: 80px 20px;
@@ -517,20 +513,31 @@
             flex-direction: column;
         }
 
-        .CodeMirror {
+        /* EasyMDE 样式优化 */
+        .EasyMDEContainer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .EasyMDEContainer .CodeMirror {
             flex: 1;
-            height: 100% !important;
+            height: auto !important;
             font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
             font-size: 15px;
+            background: var(--surface);
         }
 
         .editor-toolbar {
             border-color: var(--divider) !important;
             background: var(--surface) !important;
+            padding: 10px !important;
         }
 
         .editor-toolbar button {
             color: var(--text-secondary) !important;
+            border-radius: 6px !important;
+            margin: 0 2px !important;
         }
 
         .editor-toolbar button:hover {
@@ -538,8 +545,102 @@
             color: var(--primary-dark) !important;
         }
 
-        .editor-preview {
+        .editor-toolbar button.active {
+            background: var(--primary-light) !important;
+            color: var(--primary-dark) !important;
+        }
+
+        /* 预览模式样式 */
+        .editor-toolbar.preview-active {
+            background: rgba(114, 166, 197, 0.15) !important;
+        }
+
+        .EasyMDEContainer .editor-preview {
             background: var(--surface) !important;
+            padding: 30px !important;
+        }
+
+        .EasyMDEContainer .editor-preview .editor-preview-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .EasyMDEContainer .editor-preview h1 {
+            color: var(--primary-dark);
+            border-bottom: 2px solid var(--primary-mid);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .EasyMDEContainer .editor-preview h2 {
+            color: var(--primary-mid);
+            margin-top: 30px;
+        }
+
+        .EasyMDEContainer .editor-preview h3 {
+            color: var(--primary-dark);
+        }
+
+        .EasyMDEContainer .editor-preview code {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', monospace;
+        }
+
+        .EasyMDEContainer .editor-preview pre {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .EasyMDEContainer .editor-preview pre code {
+            background: none;
+            padding: 0;
+            color: var(--text);
+        }
+
+        .EasyMDEContainer .editor-preview blockquote {
+            border-left: 4px solid var(--primary-mid);
+            padding-left: 16px;
+            margin: 16px 0;
+            color: var(--text-secondary);
+            background: rgba(183, 208, 232, 0.2);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .EasyMDEContainer .editor-preview img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .EasyMDEContainer .editor-preview a {
+            color: var(--primary-mid);
+            text-decoration: none;
+        }
+
+        .EasyMDEContainer .editor-preview a:hover {
+            text-decoration: underline;
+        }
+
+        .EasyMDEContainer .editor-preview ul,
+        .EasyMDEContainer .editor-preview ol {
+            padding-left: 24px;
+            margin: 12px 0;
+        }
+
+        .EasyMDEContainer .editor-preview li {
+            margin-bottom: 6px;
+        }
+
+        /* 分屏模式 */
+        .EasyMDEContainer .editor-preview-side {
+            background: var(--surface) !important;
+            padding: 20px !important;
         }
 
         .modal {
@@ -772,117 +873,6 @@
             margin-bottom: 20px;
         }
 
-        .markdown-body {
-            font-size: 16px;
-            line-height: 1.8;
-        }
-
-        .markdown-body h1 {
-            font-size: 2em;
-            border-bottom: 2px solid var(--primary-mid);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            color: var(--primary-dark);
-        }
-
-        .markdown-body h2 {
-            font-size: 1.5em;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            color: var(--primary-mid);
-        }
-
-        .markdown-body h3 {
-            font-size: 1.25em;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            color: var(--primary-dark);
-        }
-
-        .markdown-body p {
-            margin-bottom: 15px;
-        }
-
-        .markdown-body code {
-            background: var(--primary-light);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'SF Mono', monospace;
-            font-size: 0.9em;
-            color: var(--primary-dark);
-        }
-
-        .markdown-body pre {
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 10px;
-            overflow-x: auto;
-            margin-bottom: 20px;
-        }
-
-        .markdown-body pre code {
-            background: none;
-            padding: 0;
-            color: var(--text);
-        }
-
-        .markdown-body blockquote {
-            border-left: 4px solid var(--primary-mid);
-            padding-left: 20px;
-            margin: 20px 0;
-            color: var(--text-secondary);
-            background: rgba(183, 208, 232, 0.2);
-            padding: 15px 20px;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .markdown-body ul, .markdown-body ol {
-            margin-bottom: 15px;
-            padding-left: 30px;
-        }
-
-        .markdown-body li {
-            margin-bottom: 8px;
-        }
-
-        .markdown-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .markdown-body th, .markdown-body td {
-            border: 1px solid var(--divider);
-            padding: 12px;
-            text-align: left;
-        }
-
-        .markdown-body th {
-            background: rgba(183, 208, 232, 0.3);
-            font-weight: 600;
-            color: var(--primary-dark);
-        }
-
-        .markdown-body img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-
-        .markdown-body a {
-            color: var(--primary-mid);
-            text-decoration: none;
-        }
-
-        .markdown-body a:hover {
-            text-decoration: underline;
-        }
-
-        .markdown-body hr {
-            border: none;
-            border-top: 2px solid var(--divider);
-            margin: 30px 0;
-        }
-
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -1034,6 +1024,7 @@
         let currentNoteId = null;
         let sortBy = 'updated';
         let easyMDE = null;
+        let isPreviewMode = false;
         
         let githubConfig = {
             token: localStorage.getItem('worknote_github_token') || '',
@@ -1047,106 +1038,144 @@
             branch: localStorage.getItem('worknote_image_branch') || 'main'
         };
 
-        // 修复后的 Markdown 解析器
+        // 改进的 Markdown 解析器
         const marked = {
             parse: (text) => {
                 if (!text) return '';
                 
+                let html = text;
+                
+                const escapeHtml = (str) => {
+                    return str
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;');
+                };
+                
                 // 保护代码块
                 const codeBlocks = [];
-                text = text.replace(/```([\s\S]*?)```/gm, (match, code) => {
+                html = html.replace(/```(\w*)\n([\s\S]*?)```/gm, (match, lang, code) => {
                     const id = codeBlocks.length;
-                    codeBlocks.push(`<pre><code>${escapeHtml(code.trim())}</code></pre>`);
-                    return `___CODE_BLOCK_${id}___`;
+                    const langClass = lang ? ` class="language-${lang}"` : '';
+                    codeBlocks.push(`<pre><code${langClass}>${escapeHtml(code.trim())}</code></pre>`);
+                    return `<!--CODE_BLOCK_${id}-->`;
                 });
                 
                 // 保护行内代码
                 const inlineCodes = [];
-                text = text.replace(/`([^`]+)`/g, (match, code) => {
+                html = html.replace(/`([^`]+)`/g, (match, code) => {
                     const id = inlineCodes.length;
                     inlineCodes.push(`<code>${escapeHtml(code)}</code>`);
-                    return `___INLINE_CODE_${id}___`;
+                    return `<!--INLINE_CODE_${id}-->`;
                 });
                 
                 // 处理标题
-                text = text.replace(/^### (.*)$/gm, '<h3>$1</h3>');
-                text = text.replace(/^## (.*)$/gm, '<h2>$1</h2>');
-                text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+                html = html.replace(/^###### (.*)$/gm, '<h6>$1</h6>');
+                html = html.replace(/^##### (.*)$/gm, '<h5>$1</h5>');
+                html = html.replace(/^#### (.*)$/gm, '<h4>$1</h4>');
+                html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
                 
                 // 处理粗体和斜体
-                text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<b><i>$1</i></b>');
-                text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-                text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
-                text = text.replace(/___(.*?)___/g, '<i>$1</i>');
+                html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                html = html.replace(/___(.*?)___/g, '<em>$1</em>');
+                html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
+                html = html.replace(/_(.*?)_/g, '<em>$1</em>');
                 
-                // 处理图片和链接
-                text = text.replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" style="max-width:100%;border-radius:8px;">');
-                text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+                // 处理图片
+                html = html.replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" style="max-width:100%;border-radius:8px;margin:10px 0;">');
+                
+                // 处理链接
+                html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color:#72A6C5;text-decoration:none;">$1</a>');
                 
                 // 处理引用
-                text = text.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
+                html = html.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
+                html = html.replace(/<\/blockquote>\n<blockquote>/g, '<br>');
                 
                 // 处理无序列表
-                const lines = text.split('\n');
+                const lines = html.split('\n');
                 const result = [];
-                let inList = false;
+                let inUl = false;
+                let inOl = false;
                 
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
-                    const listMatch = line.match(/^- (.*)$/);
+                    const ulMatch = line.match(/^[-*+] (.*)$/);
+                    const olMatch = line.match(/^\d+\. (.*)$/);
                     
-                    if (listMatch) {
-                        if (!inList) {
+                    if (ulMatch) {
+                        if (!inUl) {
+                            if (inOl) {
+                                result.push('</ol>');
+                                inOl = false;
+                            }
                             result.push('<ul>');
-                            inList = true;
+                            inUl = true;
                         }
-                        result.push(`<li>${listMatch[1]}</li>`);
+                        result.push(`<li>${ulMatch[1]}</li>`);
+                    } else if (olMatch) {
+                        if (!inOl) {
+                            if (inUl) {
+                                result.push('</ul>');
+                                inUl = false;
+                            }
+                            result.push('<ol>');
+                            inOl = true;
+                        }
+                        result.push(`<li>${olMatch[1]}</li>`);
                     } else {
-                        if (inList) {
+                        if (inUl) {
                             result.push('</ul>');
-                            inList = false;
+                            inUl = false;
+                        }
+                        if (inOl) {
+                            result.push('</ol>');
+                            inOl = false;
                         }
                         result.push(line);
                     }
                 }
-                if (inList) result.push('</ul>');
-                text = result.join('\n');
+                
+                if (inUl) result.push('</ul>');
+                if (inOl) result.push('</ol>');
+                html = result.join('\n');
                 
                 // 处理分隔线
-                text = text.replace(/^---$/gm, '<hr>');
+                html = html.replace(/^---+$/gm, '<hr>');
                 
                 // 处理段落
-                const paragraphs = text.split(/\n\n+/);
-                text = paragraphs.map(p => {
-                    p = p.trim();
-                    if (!p) return '';
-                    if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<blockquote') || 
-                        p.startsWith('<pre') || p.startsWith('<hr')) {
-                        return p;
+                const blocks = html.split(/\n\n+/);
+                html = blocks.map(block => {
+                    block = block.trim();
+                    if (!block) return '';
+                    
+                    if (block.startsWith('<h') || 
+                        block.startsWith('<ul') || 
+                        block.startsWith('<ol') || 
+                        block.startsWith('<blockquote') || 
+                        block.startsWith('<pre') || 
+                        block.startsWith('<hr') ||
+                        block.startsWith('<!--CODE_BLOCK_') ||
+                        block.startsWith('<!--INLINE_CODE_')) {
+                        return block;
                     }
-                    return `<p>${p}</p>`;
-                }).join('');
+                    
+                    return `<p>${block}</p>`;
+                }).join('\n');
                 
                 // 恢复代码块
-                text = text.replace(/___CODE_BLOCK_(\d+)___/g, (match, id) => codeBlocks[parseInt(id)]);
-                text = text.replace(/___INLINE_CODE_(\d+)___/g, (match, id) => inlineCodes[parseInt(id)]);
+                html = html.replace(/<!--CODE_BLOCK_(\d+)-->/g, (match, id) => codeBlocks[parseInt(id)]);
+                html = html.replace(/<!--INLINE_CODE_(\d+)-->/g, (match, id) => inlineCodes[parseInt(id)]);
                 
-                // 处理剩余换行
-                text = text.replace(/\n/g, ' ');
+                // 处理单个换行
+                html = html.replace(/\n/g, ' ');
                 
-                return text;
+                return html;
             }
         };
-
-        function escapeHtml(text) {
-            if (typeof text !== 'string') return '';
-            return text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
 
         document.addEventListener('DOMContentLoaded', () => {
             renderNotebookList();
@@ -1294,26 +1323,137 @@
             const textarea = document.getElementById('markdownEditor');
             textarea.value = content;
             
+            isPreviewMode = false;
+            
             easyMDE = new EasyMDE({
                 element: textarea,
                 spellChecker: false,
                 autosave: { enabled: false },
-                placeholder: '开始写作... 支持 Markdown 语法\n\n# 标题\n**粗体** *斜体* `代码`\n- 列表项\n> 引用',
+                placeholder: '开始写作... 支持 Markdown 语法\n\n# 标题\n**粗体** *斜体* `代码`\n- 列表项\n> 引用\n\n点击 👁️ 切换预览模式',
                 toolbar: [
-                    'bold', 'italic', 'heading', '|',
-                    'quote', 'unordered-list', 'ordered-list', '|',
-                    'link', 'image', 'code', 'table', '|',
-                    'preview', 'side-by-side', 'fullscreen', '|',
-                    'guide'
+                    {
+                        name: "bold",
+                        action: EasyMDE.toggleBold,
+                        className: "fa fa-bold",
+                        title: "粗体",
+                    },
+                    {
+                        name: "italic",
+                        action: EasyMDE.toggleItalic,
+                        className: "fa fa-italic",
+                        title: "斜体",
+                    },
+                    {
+                        name: "heading",
+                        action: EasyMDE.toggleHeadingSmaller,
+                        className: "fa fa-heading",
+                        title: "标题",
+                    },
+                    "|",
+                    {
+                        name: "quote",
+                        action: EasyMDE.toggleBlockquote,
+                        className: "fa fa-quote-left",
+                        title: "引用",
+                    },
+                    {
+                        name: "unordered-list",
+                        action: EasyMDE.toggleUnorderedList,
+                        className: "fa fa-list-ul",
+                        title: "无序列表",
+                    },
+                    {
+                        name: "ordered-list",
+                        action: EasyMDE.toggleOrderedList,
+                        className: "fa fa-list-ol",
+                        title: "有序列表",
+                    },
+                    "|",
+                    {
+                        name: "link",
+                        action: EasyMDE.drawLink,
+                        className: "fa fa-link",
+                        title: "链接",
+                    },
+                    {
+                        name: "image",
+                        action: EasyMDE.drawImage,
+                        className: "fa fa-image",
+                        title: "图片",
+                    },
+                    {
+                        name: "code",
+                        action: EasyMDE.toggleCodeBlock,
+                        className: "fa fa-code",
+                        title: "代码",
+                    },
+                    {
+                        name: "table",
+                        action: EasyMDE.drawTable,
+                        className: "fa fa-table",
+                        title: "表格",
+                    },
+                    "|",
+                    {
+                        name: "preview",
+                        action: togglePreviewMode,
+                        className: "fa fa-eye",
+                        title: "切换预览模式",
+                    },
+                    {
+                        name: "side-by-side",
+                        action: EasyMDE.toggleSideBySide,
+                        className: "fa fa-columns",
+                        title: "分屏预览",
+                    },
+                    {
+                        name: "fullscreen",
+                        action: EasyMDE.toggleFullScreen,
+                        className: "fa fa-expand",
+                        title: "全屏",
+                    },
+                    "|",
+                    {
+                        name: "guide",
+                        action: "https://www.markdownguide.org/basic-syntax/",
+                        className: "fa fa-question-circle",
+                        title: "Markdown 语法指南",
+                    }
                 ],
                 status: false,
                 minHeight: 'calc(100vh - 200px)',
-                previewRender: (plainText) => {
+                renderingConfig: {
+                    singleLineBreaks: false,
+                    codeSyntaxHighlighting: true,
+                },
+                previewRender: function(plainText) {
                     return marked.parse(plainText);
                 }
             });
             
             updateImageButtonState();
+        }
+
+        function togglePreviewMode() {
+            if (!easyMDE) return;
+            
+            easyMDE.togglePreview();
+            isPreviewMode = !isPreviewMode;
+            
+            const toolbar = document.querySelector('.editor-toolbar');
+            const previewBtn = document.querySelector('.editor-toolbar .fa-eye');
+            
+            if (isPreviewMode) {
+                toolbar.classList.add('preview-active');
+                if (previewBtn) {
+                    previewBtn.parentElement.classList.add('active');
+                }
+            } else {
+                toolbar.classList.remove('preview-active');
+                if (previewBtn) {
+                    previewBtn.parentElement.classList.remove('active');
+                }
+            }
         }
 
         function saveNote() {
@@ -1396,7 +1536,6 @@
             
             container.innerHTML = notebookNotes.map(note => {
                 const updated = formatDateTime(note.updatedAt);
-                // 使用 marked 解析后去除 HTML 标签获取纯文本预览
                 const plainText = marked.parse(note.content || '')
                     .replace(/<[^>]+>/g, ' ')
                     .replace(/\s+/g, ' ')
@@ -1865,6 +2004,16 @@
 
         function pad(n) {
             return n < 10 ? '0' + n : n;
+        }
+
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         function closeModal(id) {
