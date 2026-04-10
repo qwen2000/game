@@ -27,7 +27,6 @@
         }
 
         :root {
-            /* 配色方案 */
             --primary-dark: #4D6C78;
             --primary-light: #B7D0E8;
             --primary-mid: #72A6C5;
@@ -49,7 +48,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* 头部 */
         header {
             background: linear-gradient(135deg, var(--primary-dark), #3d5a63);
             color: white;
@@ -101,7 +99,6 @@
             transform: scale(1.1);
         }
 
-        /* 主布局 */
         .app-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -109,7 +106,6 @@
             min-height: calc(100vh - 80px);
         }
 
-        /* 侧边栏 - 笔记本列表 */
         .sidebar {
             width: 280px;
             background: var(--surface);
@@ -211,7 +207,6 @@
             opacity: 0.7;
         }
 
-        /* 删除按钮 */
         .delete-notebook-btn {
             width: 32px;
             height: 32px;
@@ -240,7 +235,6 @@
             background: rgba(255, 255, 255, 0.25);
         }
 
-        /* 主内容区 */
         .main-content {
             flex: 1;
             display: flex;
@@ -248,7 +242,6 @@
             min-width: 0;
         }
 
-        /* 笔记列表头部 */
         .notes-header {
             padding: 20px;
             background: var(--surface);
@@ -314,7 +307,6 @@
             transform: none;
         }
 
-        /* 笔记列表 */
         .notes-list {
             flex: 1;
             overflow-y: auto;
@@ -400,13 +392,14 @@
             color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
-        /* 空状态 */
+        .note-preview h1, .note-preview h2, .note-preview h3 {
+            font-size: 1em;
+            margin: 0;
+            color: var(--text);
+        }
+
         .empty-state {
             text-align: center;
             padding: 80px 20px;
@@ -419,7 +412,6 @@
             opacity: 0.5;
         }
 
-        /* 编辑器页面 */
         .editor-page {
             display: none;
             position: fixed;
@@ -532,7 +524,6 @@
             font-size: 15px;
         }
 
-        /* 自定义编辑器工具栏颜色 */
         .editor-toolbar {
             border-color: var(--divider) !important;
             background: var(--surface) !important;
@@ -551,7 +542,6 @@
             background: var(--surface) !important;
         }
 
-        /* 弹窗 */
         .modal {
             display: none;
             position: fixed;
@@ -635,7 +625,6 @@
             color: var(--primary-dark);
         }
 
-        /* 设置面板 */
         .settings-panel {
             display: none;
             position: fixed;
@@ -680,7 +669,6 @@
             margin-bottom: 15px;
         }
 
-        /* 加载提示 */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -712,7 +700,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -733,7 +720,6 @@
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
-        /* 导出预览样式 */
         .export-preview-container {
             position: fixed;
             left: -9999px;
@@ -786,7 +772,6 @@
             margin-bottom: 20px;
         }
 
-        /* Markdown 预览样式 */
         .markdown-body {
             font-size: 16px;
             line-height: 1.8;
@@ -883,7 +868,21 @@
             border-radius: 8px;
         }
 
-        /* 响应式 */
+        .markdown-body a {
+            color: var(--primary-mid);
+            text-decoration: none;
+        }
+
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-body hr {
+            border: none;
+            border-top: 2px solid var(--divider);
+            margin: 30px 0;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -926,7 +925,6 @@
     </style>
 </head>
 <body>
-    <!-- 头部 -->
     <header>
         <div class="header-content">
             <h1>📓 工作笔记</h1>
@@ -937,9 +935,7 @@
         </div>
     </header>
 
-    <!-- 主容器 -->
     <div class="app-container">
-        <!-- 侧边栏 -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-title">笔记本</div>
@@ -951,17 +947,12 @@
             <div class="notebook-list" id="notebookList"></div>
         </aside>
 
-        <!-- 主内容 -->
         <main class="main-content">
             <div class="notes-header">
                 <div class="notes-title" id="currentNotebookName">请选择笔记本</div>
                 <div class="notes-actions">
-                    <button class="sort-btn" onclick="toggleSort()" id="sortBtn">
-                        📅 最近修改
-                    </button>
-                    <button class="sort-btn" onclick="exportNotebookPDF()" id="exportNotebookBtn" disabled>
-                        📄 导出笔记本
-                    </button>
+                    <button class="sort-btn" onclick="toggleSort()" id="sortBtn">📅 最近修改</button>
+                    <button class="sort-btn" onclick="exportNotebookPDF()" id="exportNotebookBtn" disabled>📄 导出笔记本</button>
                     <button class="new-note-btn" onclick="createNewNote()" id="newNoteBtn" disabled>
                         <span>+</span>
                         <span>新建笔记</span>
@@ -977,28 +968,17 @@
         </main>
     </div>
 
-    <!-- 编辑器页面 -->
     <div class="editor-page" id="editorPage">
         <div class="editor-header">
-            <button class="editor-btn secondary" onclick="closeEditor()">
-                ← 返回
-            </button>
+            <button class="editor-btn secondary" onclick="closeEditor()">← 返回</button>
             <div class="editor-title-input">
                 <input type="text" id="noteTitleInput" placeholder="笔记标题">
             </div>
             <div class="editor-actions">
-                <button class="editor-btn secondary" onclick="configureImageUpload()" id="imageConfigBtn">
-                    🖼️ 图床配置
-                </button>
-                <button class="editor-btn secondary" onclick="insertImage()" id="insertImageBtn" disabled>
-                    🖼️ 插入图片
-                </button>
-                <button class="editor-btn secondary" onclick="exportNotePDF()">
-                    📄 导出PDF
-                </button>
-                <button class="editor-btn save" onclick="saveNote()">
-                    💾 保存
-                </button>
+                <button class="editor-btn secondary" onclick="configureImageUpload()" id="imageConfigBtn">🖼️ 图床配置</button>
+                <button class="editor-btn secondary" onclick="insertImage()" id="insertImageBtn" disabled>🖼️ 插入图片</button>
+                <button class="editor-btn secondary" onclick="exportNotePDF()">📄 导出PDF</button>
+                <button class="editor-btn save" onclick="saveNote()">💾 保存</button>
             </div>
         </div>
         <div class="editor-container">
@@ -1008,7 +988,6 @@
         </div>
     </div>
 
-    <!-- 新建笔记本弹窗 -->
     <div class="modal" id="newNotebookModal">
         <div class="modal-content">
             <h3 class="modal-title">📓 新建笔记本</h3>
@@ -1020,7 +999,6 @@
         </div>
     </div>
 
-    <!-- 设置面板 -->
     <div class="settings-panel" id="settingsPanel">
         <div class="settings-header">
             <h3>⚙️ 设置</h3>
@@ -1043,17 +1021,12 @@
         </div>
     </div>
 
-    <!-- 加载提示 -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <p style="margin-top: 20px; color: var(--text-secondary);">同步中...</p>
     </div>
 
     <script>
-        // ============================================
-        // 数据存储
-        // ============================================
-        
         let notebooks = JSON.parse(localStorage.getItem('worknote_notebooks')) || [];
         let notes = JSON.parse(localStorage.getItem('worknote_notes')) || [];
         
@@ -1073,26 +1046,119 @@
             repo: localStorage.getItem('worknote_image_repo') || '',
             branch: localStorage.getItem('worknote_image_branch') || 'main'
         };
-        
-        // ============================================
-        // 初始化
-        // ============================================
-        
+
+        // 修复后的 Markdown 解析器
+        const marked = {
+            parse: (text) => {
+                if (!text) return '';
+                
+                // 保护代码块
+                const codeBlocks = [];
+                text = text.replace(/```([\s\S]*?)```/gm, (match, code) => {
+                    const id = codeBlocks.length;
+                    codeBlocks.push(`<pre><code>${escapeHtml(code.trim())}</code></pre>`);
+                    return `___CODE_BLOCK_${id}___`;
+                });
+                
+                // 保护行内代码
+                const inlineCodes = [];
+                text = text.replace(/`([^`]+)`/g, (match, code) => {
+                    const id = inlineCodes.length;
+                    inlineCodes.push(`<code>${escapeHtml(code)}</code>`);
+                    return `___INLINE_CODE_${id}___`;
+                });
+                
+                // 处理标题
+                text = text.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+                text = text.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+                text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+                
+                // 处理粗体和斜体
+                text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<b><i>$1</i></b>');
+                text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
+                text = text.replace(/___(.*?)___/g, '<i>$1</i>');
+                
+                // 处理图片和链接
+                text = text.replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" style="max-width:100%;border-radius:8px;">');
+                text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+                
+                // 处理引用
+                text = text.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
+                
+                // 处理无序列表
+                const lines = text.split('\n');
+                const result = [];
+                let inList = false;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    const listMatch = line.match(/^- (.*)$/);
+                    
+                    if (listMatch) {
+                        if (!inList) {
+                            result.push('<ul>');
+                            inList = true;
+                        }
+                        result.push(`<li>${listMatch[1]}</li>`);
+                    } else {
+                        if (inList) {
+                            result.push('</ul>');
+                            inList = false;
+                        }
+                        result.push(line);
+                    }
+                }
+                if (inList) result.push('</ul>');
+                text = result.join('\n');
+                
+                // 处理分隔线
+                text = text.replace(/^---$/gm, '<hr>');
+                
+                // 处理段落
+                const paragraphs = text.split(/\n\n+/);
+                text = paragraphs.map(p => {
+                    p = p.trim();
+                    if (!p) return '';
+                    if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<blockquote') || 
+                        p.startsWith('<pre') || p.startsWith('<hr')) {
+                        return p;
+                    }
+                    return `<p>${p}</p>`;
+                }).join('');
+                
+                // 恢复代码块
+                text = text.replace(/___CODE_BLOCK_(\d+)___/g, (match, id) => codeBlocks[parseInt(id)]);
+                text = text.replace(/___INLINE_CODE_(\d+)___/g, (match, id) => inlineCodes[parseInt(id)]);
+                
+                // 处理剩余换行
+                text = text.replace(/\n/g, ' ');
+                
+                return text;
+            }
+        };
+
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             renderNotebookList();
             loadGithubSettings();
         });
-        
-        // ============================================
-        // 笔记本管理
-        // ============================================
-        
+
         function openNewNotebookModal() {
             document.getElementById('notebookNameInput').value = '';
             document.getElementById('newNotebookModal').classList.add('active');
             setTimeout(() => document.getElementById('notebookNameInput').focus(), 100);
         }
-        
+
         function createNotebook() {
             const name = document.getElementById('notebookNameInput').value.trim();
             if (!name) {
@@ -1115,7 +1181,7 @@
             selectNotebook(notebook.id);
             showToast('笔记本创建成功');
         }
-        
+
         function deleteNotebook(id) {
             const notebook = notebooks.find(n => n.id === id);
             const noteCount = notes.filter(n => n.notebookId === id).length;
@@ -1139,7 +1205,7 @@
             renderNotebookList();
             showToast('笔记本已删除');
         }
-        
+
         function renderNotebookList() {
             const container = document.getElementById('notebookList');
             
@@ -1166,7 +1232,7 @@
                 `;
             }).join('');
         }
-        
+
         function selectNotebook(id) {
             currentNotebookId = id;
             const notebook = notebooks.find(n => n.id === id);
@@ -1178,11 +1244,7 @@
             renderNotebookList();
             renderNotesList();
         }
-        
-        // ============================================
-        // 笔记管理
-        // ============================================
-        
+
         function createNewNote() {
             if (!currentNotebookId) return;
             
@@ -1193,7 +1255,7 @@
             
             document.getElementById('editorPage').classList.add('active');
         }
-        
+
         function editNote(id) {
             const note = notes.find(n => n.id === id);
             if (!note) return;
@@ -1205,7 +1267,7 @@
             
             document.getElementById('editorPage').classList.add('active');
         }
-        
+
         function deleteNote(id) {
             if (!confirm('确定删除这篇笔记？此操作不可恢复！')) {
                 return;
@@ -1222,7 +1284,7 @@
             renderNotebookList();
             showToast('笔记已删除');
         }
-        
+
         function initEditor(content) {
             if (easyMDE) {
                 easyMDE.toTextArea();
@@ -1245,12 +1307,15 @@
                     'guide'
                 ],
                 status: false,
-                minHeight: 'calc(100vh - 200px)'
+                minHeight: 'calc(100vh - 200px)',
+                previewRender: (plainText) => {
+                    return marked.parse(plainText);
+                }
             });
             
             updateImageButtonState();
         }
-        
+
         function saveNote() {
             const title = document.getElementById('noteTitleInput').value.trim() || '无标题';
             const content = easyMDE.value();
@@ -1283,7 +1348,7 @@
             saveData();
             showToast('保存成功');
         }
-        
+
         function closeEditor() {
             document.getElementById('editorPage').classList.remove('active');
             renderNotesList();
@@ -1293,13 +1358,13 @@
                 easyMDE = null;
             }
         }
-        
+
         function toggleSort() {
             sortBy = sortBy === 'updated' ? 'created' : 'updated';
             document.getElementById('sortBtn').textContent = sortBy === 'updated' ? '📅 最近修改' : '📅 创建时间';
             renderNotesList();
         }
-        
+
         function renderNotesList() {
             const container = document.getElementById('notesList');
             
@@ -1331,7 +1396,13 @@
             
             container.innerHTML = notebookNotes.map(note => {
                 const updated = formatDateTime(note.updatedAt);
-                const preview = note.content ? note.content.substring(0, 150).replace(/[#*`]/g, '') + '...' : '无内容';
+                // 使用 marked 解析后去除 HTML 标签获取纯文本预览
+                const plainText = marked.parse(note.content || '')
+                    .replace(/<[^>]+>/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim()
+                    .substring(0, 150);
+                const preview = plainText || '无内容';
                 
                 return `
                     <div class="note-item" onclick="editNote('${note.id}')">
@@ -1347,16 +1418,12 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="note-preview">${escapeHtml(preview)}</div>
+                        <div class="note-preview">${escapeHtml(preview)}...</div>
                     </div>
                 `;
             }).join('');
         }
-        
-        // ============================================
-        // 图片上传
-        // ============================================
-        
+
         function configureImageUpload() {
             const token = prompt('GitHub Token (ghp_...):', imageConfig.token);
             if (token === null) return;
@@ -1377,14 +1444,14 @@
             updateImageButtonState();
             showToast('图床配置已保存');
         }
-        
+
         function updateImageButtonState() {
             const btn = document.getElementById('insertImageBtn');
             const hasConfig = imageConfig.token && imageConfig.repo;
             btn.disabled = !hasConfig;
             btn.textContent = hasConfig ? '🖼️ 插入图片' : '🖼️ 请先配置';
         }
-        
+
         async function insertImage() {
             if (!imageConfig.token || !imageConfig.repo) {
                 configureImageUpload();
@@ -1418,7 +1485,7 @@
             
             input.click();
         }
-        
+
         async function uploadImageToGithub(file) {
             const compressed = await compressImage(file, 1600, 0.85);
             const base64Data = compressed.split(',')[1];
@@ -1449,7 +1516,7 @@
             
             return `https://cdn.jsdelivr.net/gh/${imageConfig.repo}@${imageConfig.branch}/${filename}`;
         }
-        
+
         function compressImage(file, maxWidth = 1600, quality = 0.85) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -1482,11 +1549,7 @@
                 reader.readAsDataURL(file);
             });
         }
-        
-        // ============================================
-        // PDF 导出
-        // ============================================
-        
+
         async function exportNotePDF() {
             const title = document.getElementById('noteTitleInput').value.trim() || '无标题';
             const content = easyMDE.value();
@@ -1495,12 +1558,10 @@
             const container = document.createElement('div');
             container.className = 'export-preview-container';
             container.innerHTML = `
-                <div class="export-preview-content">
+                <div class="markdown-body">
                     <h1>${escapeHtml(title)}</h1>
-                    <div class="note-meta">
-                        导出时间：${formatDateTime(now.toISOString())}
-                    </div>
-                    <div class="markdown-body">${marked.parse(content)}</div>
+                    <div class="export-note-time">导出时间：${formatDateTime(now.toISOString())}</div>
+                    ${marked.parse(content)}
                 </div>
             `;
             document.body.appendChild(container);
@@ -1540,7 +1601,7 @@
             document.body.removeChild(container);
             showToast('PDF 导出成功');
         }
-        
+
         async function exportNotebookPDF() {
             if (!currentNotebookId) return;
             
@@ -1616,25 +1677,21 @@
             showLoading(false);
             showToast('笔记本导出成功');
         }
-        
-        // ============================================
-        // GitHub 同步
-        // ============================================
-        
+
         function openSettings() {
             document.getElementById('settingsPanel').classList.add('active');
         }
-        
+
         function closeSettings() {
             document.getElementById('settingsPanel').classList.remove('active');
         }
-        
+
         function loadGithubSettings() {
             document.getElementById('githubToken').value = githubConfig.token;
             document.getElementById('githubRepo').value = githubConfig.repo;
             document.getElementById('githubBranch').value = githubConfig.branch;
         }
-        
+
         function saveGithubSettings() {
             githubConfig.token = document.getElementById('githubToken').value.trim();
             githubConfig.repo = document.getElementById('githubRepo').value.trim();
@@ -1646,7 +1703,7 @@
             
             testGithubConnection();
         }
-        
+
         async function testGithubConnection() {
             if (!githubConfig.token || !githubConfig.repo) {
                 showToast('请填写完整的 GitHub 配置');
@@ -1674,7 +1731,7 @@
                 showLoading(false);
             }
         }
-        
+
         async function syncToGithub() {
             if (!githubConfig.token || !githubConfig.repo) {
                 showToast('请先配置 GitHub');
@@ -1731,11 +1788,7 @@
                 showLoading(false);
             }
         }
-        
-        // ============================================
-        // 数据导入导出
-        // ============================================
-        
+
         function exportAllData() {
             const data = {
                 notebooks,
@@ -1753,11 +1806,11 @@
             
             showToast('数据已导出');
         }
-        
+
         function importData() {
             document.getElementById('importFile').click();
         }
-        
+
         function handleImport(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1786,16 +1839,12 @@
             
             event.target.value = '';
         }
-        
-        // ============================================
-        // 工具函数
-        // ============================================
-        
+
         function saveData() {
             localStorage.setItem('worknote_notebooks', JSON.stringify(notebooks));
             localStorage.setItem('worknote_notes', JSON.stringify(notes));
         }
-        
+
         function formatDateTime(isoString) {
             const date = new Date(isoString);
             const now = new Date();
@@ -1809,29 +1858,23 @@
             
             return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
-        
+
         function formatDateFile(date) {
             return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_${pad(date.getHours())}${pad(date.getMinutes())}`;
         }
-        
+
         function pad(n) {
             return n < 10 ? '0' + n : n;
         }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
+
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
         }
-        
+
         function showLoading(show) {
             document.getElementById('loadingOverlay').classList.toggle('active', show);
         }
-        
+
         function showToast(message) {
             const existing = document.querySelector('.toast');
             if (existing) existing.remove();
@@ -1843,26 +1886,7 @@
             
             setTimeout(() => toast.remove(), 3000);
         }
-        
-        // 简单的 Markdown 解析
-        const marked = {
-            parse: (text) => {
-                if (!text) return '';
-                return text
-                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-                    .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-                    .replace(/\*(.*)\*/gim, '<i>$1</i>')
-                    .replace(/`([^`]+)`/gim, '<code>$1</code>')
-                    .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
-                    .replace(/!\[(.*?)\]\((.*?)\)/gim, '<img alt="$1" src="$2" style="max-width:100%;">')
-                    .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2">$1</a>')
-                    .replace(/\n/gim, '<br>');
-            }
-        };
-        
-        // 点击外部关闭弹窗
+
         document.querySelectorAll('.modal').forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) closeModal(modal.id);
